@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Instagram 分析 — @fuchan_tokimekimemo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#F7F6F3; --card:#FFFFFF; --border:#EAE6DE; --text:#2B2B2B; --muted:#8D8880;
+    --accent:#D8C5A6; --accent-soft:#F4EEE2; --accent-deep:#9A855C;
+    --sage:#8FA58B; --warn:#C9A227; --low:#B25B4C;
+    --radius:18px; --shadow:0 6px 24px rgba(0,0,0,.04);
+  }
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans JP",-apple-system,sans-serif;line-height:1.7;padding:48px 20px}
+  .container{max-width:1060px;margin:0 auto}
+  .muted{color:var(--muted);font-size:.85rem}
+
+  .top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;flex-wrap:wrap;gap:12px}
+  .top h1{font-size:30px;font-weight:700;display:flex;align-items:center;gap:12px}
+  .top h1 .ig-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:var(--accent-soft);color:var(--accent-deep)}
+  .top .gen{text-align:right;color:var(--muted);font-size:.82rem;line-height:1.6}
+
+  .section-title{font-size:21px;font-weight:600;margin:56px 0 6px;display:flex;align-items:center;gap:10px}
+  .section-title .ico{color:var(--accent-deep);display:inline-flex}
+  .section-note{color:var(--muted);font-size:.83rem;margin-bottom:18px}
+  .sub-title{font-size:15px;font-weight:600;margin:26px 0 10px;color:#4A463F}
+
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .summary-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 18px;text-align:center}
+  .s-label{font-size:.75rem;color:var(--muted);margin-bottom:8px}
+  .s-value{font-size:30px;font-weight:700;letter-spacing:-.01em}
+
+  .recs{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 28px 28px 48px}
+  .recs li{margin:10px 0}
+
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .stats-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;font-size:.88rem}
+  .stats-table th{background:#FBFAF7;text-align:left;padding:12px 14px;font-size:.75rem;color:var(--muted);white-space:nowrap;font-weight:600}
+  .stats-table td{padding:10px 14px;border-top:1px solid var(--border)}
+  .stats-table tbody tr:hover td{background:#FAF8F5}
+  .stats-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .stats-table .example a{color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+  .stats-table .example a:hover span{text-decoration:underline}
+  .thumb{width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0;background:var(--accent-soft)}
+  .sortable th[data-sort]{cursor:pointer;user-select:none}
+  .bar-cell{width:150px}
+  .bar{height:8px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));border-radius:4px;min-width:2px;opacity:.7}
+  .lift{font-weight:600;padding:2px 9px;border-radius:99px;font-size:.78rem}
+  .lift-pos{background:#EDF2EC;color:var(--sage)}
+  .lift-neg{background:#F7EAE6;color:var(--low)}
+  .lift-flat{background:#F2F0EB;color:var(--muted)}
+
+  .search-bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+  .search-bar input{flex:1;min-width:230px;height:48px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 18px;color:var(--text);font-size:16px;font-family:inherit;box-shadow:var(--shadow)}
+  .search-bar input:focus{outline:none;border-color:var(--accent-deep)}
+  .search-bar select{height:48px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 14px;color:var(--text);font-size:15px;font-family:inherit;box-shadow:var(--shadow)}
+
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card.rank-top{border:1px solid var(--accent)}
+  .card.rank-warn{border:1px solid var(--warn)}
+  .card-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--accent-soft)}
+  .card-body{padding:20px 22px 22px}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:.72rem;background:var(--accent-soft);color:var(--accent-deep);padding:3px 10px;border-radius:99px;font-weight:500}
+  .chip-tag{background:#F2F0EB;color:var(--muted)}
+  .timestamp{font-size:.74rem;color:var(--muted)}
+  .card-preview{font-size:.86rem;color:#57534C;margin-bottom:14px;line-height:1.65;min-height:40px}
+  .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .metric{text-align:center;padding:10px 4px;border-radius:12px;background:#FBFAF7}
+  .metric.accent{background:var(--accent-soft)}
+  .m-label{font-size:.68rem;color:var(--muted)}
+  .m-value{font-size:1rem;font-weight:600}
+  .rates-row{display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--border);padding-top:12px}
+  .rate{display:flex;align-items:baseline;gap:8px}
+  .r-label{font-size:.72rem;color:var(--muted)}
+  .r-value{font-size:1.05rem;font-weight:700}
+  .r-value.good{color:var(--sage)}
+  .r-value.mid{color:var(--warn)}
+  .r-value.low{color:var(--low)}
+  .permalink{margin-left:auto;font-size:.8rem;color:var(--accent-deep);text-decoration:none}
+  .permalink:hover{text-decoration:underline}
+
+  .ai-block{background:#F4F7F2;border:1px solid #E3EADF;border-radius:14px;padding:14px 16px;margin-top:14px;font-size:.8rem;line-height:1.65}
+  .ai-title{display:flex;align-items:center;gap:6px;font-weight:600;color:#5F7259;margin-bottom:8px;font-size:.76rem}
+  .ai-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .ai-chip{background:#fff;border:1px solid #E3EADF;color:#5F7259;padding:2px 9px;border-radius:99px;font-size:.7rem}
+  .ai-row{margin:7px 0;color:#4A463F}
+  .ai-k{display:inline-block;font-weight:600;color:#5F7259;margin-right:8px;font-size:.72rem}
+  .ai-list{margin:4px 0 0 18px}
+  .ai-list li{margin:3px 0}
+
+  .footer{text-align:center;color:var(--muted);font-size:.78rem;padding:40px 0 10px;margin-top:60px;border-top:1px solid var(--border)}
+
+  @media(max-width:640px){
+    body{padding:20px 10px}
+    .top h1{font-size:22px}
+    .cards-grid{grid-template-columns:repeat(2,1fr)}
+    .card-body{padding:12px 12px 14px}
+    .metrics-row{grid-template-columns:repeat(2,1fr)}
+    .summary-grid{grid-template-columns:repeat(2,1fr)}
+    .s-value{font-size:22px}
+    .stats-table{font-size:.76rem}
+    .stats-table th,.stats-table td{padding:8px 9px}
+    .hide-sm{display:none}
+    .thumb{width:30px;height:30px}
+    .search-bar input{font-size:16px}
+    .section-title{font-size:17px;margin-top:38px}
+    .bar-cell{width:60px}
+    .card-preview{min-height:0}
+    .rates-row{flex-wrap:wrap;gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="top">
+  <h1><span class="ig-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>Instagram 分析</h1>
+  <div class="gen">@fuchan_tokimekimemo<br>生成日時：2026/07/13 10:33<br>フォロワー：230 人</div>
+</header>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></span>投稿検索</h2>
+<p class="section-note">デフォルトは直近30日の閲覧数上位20件。検索・種別選択で全 36 件が対象</p>
+<div class="search-bar">
+    <input type="text" id="post-search" placeholder="キーワード検索（キャプション全文が対象）">
+    <select id="cat-filter"><option value="">全種別</option><option value="カルーセル">カルーセル</option><option value="画像">画像</option></select>
+    <span class="muted" id="search-count"></span>
+  </div>
+  <div class="table-wrap"><table class="stats-table sortable" id="all-posts">
+    <thead><tr>
+      <th data-sort="num">日付 ▾</th><th>投稿</th><th class="hide-sm">種別</th><th data-sort="num">閲覧数</th>
+      <th data-sort="num">保存</th><th data-sort="num" class="hide-sm">コメント</th><th data-sort="num">いいね</th><th data-sort="num" class="hide-sm">スコア</th>
+    </tr></thead>
+    <tbody><tr style="display:none" data-cat="カルーセル" data-full="桜の匂いのハンドソープ、めちゃくちゃ可愛いしいい匂いすぎる🌸￼" data-def="0">
+    <td data-v="1772884713000">2026/03/07</td>
+    <td class="example"><a href="https://www.instagram.com/p/DVlReNXAVym/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/649215360_17882824047465938_4153086653091801819_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=NcsAdrdjMNwQ7kNvwG0RHf-&amp;_nc_oc=AdqCR8UneYMSRkdDavRCao4g3vnjJ7SYJDmmkAPtmd_Y9b48afeqSOrpf_wFm2E4xueM3LZTuJV_hWfyI9xQE3nu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHBgKohvaMXiv6kErjMNh5rCtLcfbXPZRpz67kMg6K1aaIS0Zd03kLd4uVkeYVWgoZBwNGr7tMF&amp;oh=00_AQBQChKjcv2yWjZz5ShKfun9iQo1_3s4MRs5Sho9Xgc4FA&amp;oe=6A5A0915" loading="lazy" alt=""><span>桜の匂いのハンドソープ、めちゃくちゃ可愛いしいい匂いすぎる�…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="3453"><strong>3,453</strong></td>
+    <td class="num" data-v="2">2</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="52.90909090909091">53</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="美味しかった🍓
+ほぼ0キロカロリーナリ
+
+@farmoon_kyoto" data-def="0">
+    <td data-v="1774873105000">2026/03/30</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWgiB6niZjI/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/659036662_17886183147465938_8694104429961500763_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=0UKp8E2ZFYoQ7kNvwHBXsqf&amp;_nc_oc=AdpErnqKi2p6cPeU7nGpa5iOQuacIekvMyK6nT7y2yQqs5qiJj0E8VfF09R8WBXQLNdGMybdHvplicXN6OW19LxV&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEkMycP-HeNdi2Mw8pIrUWdVzNeP0TDEy2-DEwkirh6-w_hW2No-6PaVUF0u0u617CcaCPfQO3t&amp;oh=00_AQByluPYvl-JIlUWvEzo48rttHP9ntb3zPgMvjugUvlcyA&amp;oe=6A5A295A" loading="lazy" alt=""><span>美味しかった🍓 ほぼ0キロカロリーナリ @farmoon_…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="2216"><strong>2,216</strong></td>
+    <td class="num" data-v="18">18</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="25">25</td>
+    <td class="num hide-sm" data-v="72.54545454545453">73</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="…
+天満橋から徒歩8分、素敵な雰囲気のカフェでした☕️
+
+@nova__jp" data-def="0">
+    <td data-v="1773572835000">2026/03/15</td>
+    <td class="example"><a href="https://www.instagram.com/p/DV5x9gpiWK4/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/651510862_17883901641465938_1686897798754566819_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=uiaA-yc7H1wQ7kNvwGBeGoP&amp;_nc_oc=Adp-d5iDiqA5MQjooNaY8qpXigPVhbqjyksNy6Hw4lF6QjYnX0W28n9zv5mGtH5Z_UmYaSiokcukiaeGQteOLXHD&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFsbwlKMQGcVOLawTZMiueI_WsINLbR-7qdfyDunc703fhoOAW2nMhhNpD38m6bgkIodMmUe2gX&amp;oh=00_AQDxUShjPaJzj1hrI0g-e5IRgOd8vG6KadpvFeYfP8wU3w&amp;oe=6A5A18F9" loading="lazy" alt=""><span>… 天満橋から徒歩8分、素敵な雰囲気のカフェでした☕️ @n…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="2077"><strong>2,077</strong></td>
+    <td class="num" data-v="8">8</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="68">68</td>
+    <td class="num hide-sm" data-v="64.86371841155234">65</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="お誕生日祝いに連れてってもらった🍰
+ご飯も建物も何もかも美しすぎて頭抱えてました…
+
+📍 @patinaosaka 
+
+shot on #sonyα7cⅱ" data-def="0">
+    <td data-v="1771840797000">2026/02/23</td>
+    <td class="example"><a href="https://www.instagram.com/p/DVGKXEJgSKT/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/637722555_17881226553465938_1207516242300380405_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=oWJbIbAA8r8Q7kNvwEiU7X4&amp;_nc_oc=Adro6mlJZ2JSa_1b33DknHJDdnPR6vl74Ogom1WnrQk0FGjwmXbuduFc71ya0-dQGrHmiDNLvG7FrTH58HBIH_1P&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQH1K77LKDrl444pth_FH7BTjNXZrmXY1v_a8GD8Ado1Fmr15q5qmP51SgoW2Ct1cqrdwM3Vx-qL&amp;oh=00_AQCDbNr8P2USYmTYMCkoEG6aYlwfaozVnuUicoYw1c5MoQ&amp;oe=6A5A00FB" loading="lazy" alt=""><span>お誕生日祝いに連れてってもらった🍰 ご飯も建物も何もかも美…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1957"><strong>1,957</strong></td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="55">55</td>
+    <td class="num hide-sm" data-v="58.15613718411552">58</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="こんなに雨が似合うカフェある？
+落ち着いた素敵な空間、京都烏丸に来る際は是非に🍵
+
+is there any café that suits the rain this perfectly?
+a calm and beautiful space. if you’re visiting karasuma, kyoto, definitely stop by 🍵
+
+📍京都　烏丸　kyoto, karasuma　@qutoten.jp @itoyufu.kyoto" data-def="1">
+    <td data-v="1783249332000">2026/07/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DaaKaj0CckY/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/735595180_17900136243465938_3684231944256387858_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=3OhUczqiBSIQ7kNvwEGywJB&amp;_nc_oc=Ado9p5ast8KfPlQ9t0LXIn3UBfdZbGeE91czowecgeZpKY-yyrq8UqXF-uNZsoVg9-uo7GYawEyrRDibwKwHYei5&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEvd4R81ekDef9sGFsGq7sCiiIRQhBBWBWA0na_VW6dbJmmp_y13nvbBn7V0zjRjsJzGyT-ICyt&amp;oh=00_AQBtpX3tvupw-XFPA6scV8ngXxnDbOVf9SjMbmkl9uDi7Q&amp;oe=6A59F7CE" loading="lazy" alt=""><span>こんなに雨が似合うカフェある？ 落ち着いた素敵な空間、京都烏…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1836"><strong>1,836</strong></td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="45">45</td>
+    <td class="num hide-sm" data-v="53.60781096160158">54</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="あまりにもかっこいい内装に興奮が止まりませんでしたワ
+
+📍京都　@koan.kyoto" data-def="0">
+    <td data-v="1775127807000">2026/04/02</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWoH1aYicZG/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/659215063_17886628740465938_5091005740240236357_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=eFubGKD0M8QQ7kNvwG1Na3d&amp;_nc_oc=AdomxSM_FgJaZk_-kRN0PkobXgQaErGWh4OiqjO3JD_NIBaXA1iHo035CXMdP_IBJ0oP_DlWrzy_v53mG8p9keBK&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGZDa1P_l9kT1Nz1D_DLtsEvyXsPLkCNl26SacbRAtCnRtS_B4sSRHlNP4cZFP_macXAp2VefkY&amp;oh=00_AQBI3GSNqQD74gE6yuY-xzE_WSINnlnIDrzZukvi37ibnQ&amp;oe=6A5A0AFF" loading="lazy" alt=""><span>あまりにもかっこいい内装に興奮が止まりませんでしたワ 📍京…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1728"><strong>1,728</strong></td>
+    <td class="num" data-v="25">25</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="18">18</td>
+    <td class="num hide-sm" data-v="67.26189694781752">67</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="桜が綺麗な時期に行けて幸せでした🌸
+
+@chillskyoto.ig" data-def="0">
+    <td data-v="1774753797000">2026/03/29</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWc-d8uCQQR/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/656863624_17885980941465938_465580198798316552_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F-nIhjfB7OYQ7kNvwHG3QBO&amp;_nc_oc=AdptcPCIKeQU_KHfaZ-eh7TgBVq_ItnkbRIlncCet-GnZdmjDHsJX3iZ5kR9a-45bD4dvFj1K4DG0McH4NTzlNxr&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGSe4oNAe21FbItNIPJGpqmWWb_xBj3lB7YUi7-W0ziiM93WVXvlXQQARjN-bOG6JpEELdkBr9D&amp;oh=00_AQBgwnRCQrfpioMYwwQKahcCLqMlSdFbZUH_L__QiqCcEA&amp;oe=6A5A00A0" loading="lazy" alt=""><span>桜が綺麗な時期に行けて幸せでした🌸 @chillskyot…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1728"><strong>1,728</strong></td>
+    <td class="num" data-v="28">28</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="22">22</td>
+    <td class="num hide-sm" data-v="67.98916967509025">68</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="こんなとこ無料で行けちゃうんやったら通ってしまうよな、一回にスタバがあるのもかなりありがたい🪑
+
+📍大阪　門真　@kadomado_public_library" data-def="0">
+    <td data-v="1780048804000">2026/05/29</td>
+    <td class="example"><a href="https://www.instagram.com/p/DY6x_EMiQwm/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/708528508_17894722755465938_6149358998706070260_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F5OE--3AopkQ7kNvwElmGbF&amp;_nc_oc=AdqlmoBpdpNkNDEmAE0haTMKBnBqT_Ostzqo1R8NFivHDIsnDvKVvOg_6TFmrdm-M6kF3ulX8bNyFuu5iO1BCg5B&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGsC34v4dmBflPQNPmb240Gs1PpRG-FTlTswnJtqbhYAj6xWY1n09DGIk7ztLTzXycl_LxeyKH8&amp;oh=00_AQA6nqhSUYhbgMQwEzV-oxtJ5bZPpIRa6FC-U-9fBdkNfA&amp;oe=6A5A2B52" loading="lazy" alt=""><span>こんなとこ無料で行けちゃうんやったら通ってしまうよな、一回に…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1590"><strong>1,590</strong></td>
+    <td class="num" data-v="16">16</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="25">25</td>
+    <td class="num hide-sm" data-v="56.42090580899245">56</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="@patinaosaka" data-def="0">
+    <td data-v="1775127892000">2026/04/02</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWoH9UrCaAc/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657344508_17886629172465938_8936436122145899841_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=mrocb9ack6IQ7kNvwFhlLYm&amp;_nc_oc=AdqN7_pL6azIXBg-QxSADuNUpNQoCKQwl3ZF8nO7Nv6G0XY9G6KMK4PtfGxvE7dnwrMkGVKMtgRawd66b4YjVvtb&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGG9W12o7ySOyphKwq_gQcDihLeMVd9NCOKb5htmqCT_T-TqYKh4g4cf00EO_texv7_zVg8h_T8&amp;oh=00_AQAlHg0k5IcFEKHPaRbc-sLHR-31czoqmOyIk8WIovqv2w&amp;oe=6A59FA12" loading="lazy" alt=""><span>@patinaosaka</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1523"><strong>1,523</strong></td>
+    <td class="num" data-v="2">2</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="39.090991138825075">39</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="📍大阪　天満橋
+
+@hotelnoum 
+@noum_osaka" data-def="0">
+    <td data-v="1775472824000">2026/04/06</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWyZ5ztiSWr/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/660427098_17887168248465938_3323052560452616375_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=zZco3Ak0e6AQ7kNvwFrSpsi&amp;_nc_oc=AdqmSDs6kpbmkXSPKfhYNRxz9g7m7LuNgaQ3y2dkqHivxq6H948iZD1fgh4zukqBZOpucFuGZnZfZDwMxrSkOvEU&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHBIa2Tt-T-Q7RnTISRSh1b6CzIOAOzMGVH63ZXuIIGwEj4ARA6qB0l7BrQ2c_4ZclfrSuEro5g&amp;oh=00_AQCUVRaXEaQs5wxndK2eNQXEv9HMts5IpysN0E_EXH9Q0w&amp;oe=6A5A11F7" loading="lazy" alt=""><span>📍大阪　天満橋 @hotelnoum  @noum_osa…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1414"><strong>1,414</strong></td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="22">22</td>
+    <td class="num hide-sm" data-v="40.90433212996389">41</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="この金額でこんなに幸せになれるなら安いもんだぜ…
+
+@delonghi_japan" data-def="0">
+    <td data-v="1774168817000">2026/03/22</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWLitL6CQhJ/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657281299_17884955517465938_808631518555802106_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ygDIhw19DmEQ7kNvwHUdMt0&amp;_nc_oc=AdocykXkvsBGcyagASlebRTL8pz4kMUG-BU2v5AQ0-jQPYRSLUqFvan2O-wZdegZ-KHqvYfGuZGuklDhGzrV7w1L&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQF6q327zxO59MID0_B6td0akr_eU8ejy3b8bDcJ8I4sJxURnCJrc4_Cg0zTLFyFDJftnA6Py90N&amp;oh=00_AQAQdDMmBi-DGJPhf8QXzsgAYkRqkpnnHo2zBKzYifZWjQ&amp;oe=6A5A1371" loading="lazy" alt=""><span>この金額でこんなに幸せになれるなら安いもんだぜ… @delo…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1327"><strong>1,327</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="32.03224483098129">32</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="神戸三宮でチーズケーキ食べたいなら絶対にここ！
+季節限定のラインナップが定期的に入れ替わるから、何回行っても楽しめる🧀
+
+📍兵庫　三宮　@cafekeshipearl @keshipearl.stand" data-def="0">
+    <td data-v="1775730960000">2026/04/09</td>
+    <td class="example"><a href="https://www.instagram.com/p/DW6GQipiXo9/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/662453623_17887562730465938_4381752599760039081_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=t7TOJ5s4KNsQ7kNvwGzBAjd&amp;_nc_oc=AdruL-VtBZmQIcjLDhahDHukfwynsz-7-CGjwNoTxJ6P8YD6ceoSHGpJbSO5xLjF3Me9jcEv489G9m4l2vy8R0-c&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFBJUGSeXsGllxZKRRDIivgq3taXdsbUhVfw12sIRVdYx9ElFhCQod95_VlJZnsP1cBdkofqEYZ&amp;oh=00_AQBizJA0WZO6kBp7wSMKPkWTR0enhxpBD6wMp1s7ulmdiA&amp;oe=6A5A0CED" loading="lazy" alt=""><span>神戸三宮でチーズケーキ食べたいなら絶対にここ！ 季節限定のラ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1250"><strong>1,250</strong></td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="37.9312438464063">38</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="中之島図書館にできたカフェめちゃくちゃ良かった！！！
+今月オープンしたばっかりらしいけど、既にお客さん多かった🤢
+建築好きな人にもおすすめだな！
+
+📍大阪　中之島　@kakotoima_nakanoshima" data-def="0">
+    <td data-v="1776598278000">2026/04/19</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXT8iUYCcbP/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670419000_17888918445465938_9161369313361482791_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ogUm4vlNRZ4Q7kNvwFOZ_SH&amp;_nc_oc=Adp9B0hvOAk3pOGVp2lUXWhCXQBmlkTS07_CQZbY-tXKMp0hQPTcauGwncveaUn9EGD14XbCYvTGKraUeW7yvD3-&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQH5vXZffW3Rh-_WMJSlQ17D3K0rwNOZcxXsIyXakIApzlJUYJ7knpLL3kevk_HELbATV4HjhCgn&amp;oh=00_AQC2v6DjOGy0GNWbCkSgTVRHpkKAkb8pQg2baUnnTIgxSQ&amp;oe=6A5A104D" loading="lazy" alt=""><span>中之島図書館にできたカフェめちゃくちゃ良かった！！！ 今月オ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1023"><strong>1,023</strong></td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="23">23</td>
+    <td class="num hide-sm" data-v="31.263948145717098">31</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="ちょっとしたギフトにぴったりすぎる！
+紀州の梅干してビターチョコでコーティングしてるお菓子、めちゃくちゃ美味しかった🥲
+
+📍 @haku_kyoto_jp 「はつな草」" data-def="0">
+    <td data-v="1771842705000">2026/02/23</td>
+    <td class="example"><a href="https://www.instagram.com/p/DVGOAETAUzt/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/637767103_17881229229465938_8828567450305591647_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=GPRnk2-2LB8Q7kNvwHmiigV&amp;_nc_oc=AdrH8CyvqPZPd8r_gu1c7qX-xVe2-aFy6Xg0EeWIE_8m99yr_O3ytiaLOpOsCeWz5Ru70kVBJtm2b8dF2xoicLTy&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHRtxTqhotoDfKBIClVdBCGPIi7OsW5vT1XTNC9ABAT7bsCKEpfGtq9NidcfVXMU3MGZa7_87O8&amp;oh=00_AQBJubQepjgecqO3uy36Y1QfIVHGtFIgYfndAqP_xQzHOg&amp;oe=6A59FDAF" loading="lazy" alt=""><span>ちょっとしたギフトにぴったりすぎる！ 紀州の梅干してビターチ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="910"><strong>910</strong></td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="33.441581883820156">33</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="こんなとこにほんまにある？って場所にあるカフェ。
+遠かったけどそれでも行く価値があります、内装も素敵やったし野菜だけでこんなにも満足したのは初めてでした🥹
+
+a café tucked away in a place that makes you wonder, is there really a café here?
+
+it was quite far, but absolutely worth the trip. the interior was beautiful, and i think this was the first time i felt this satisfied with a meal made only with vegetables 🥹
+
+📍京都　kyoto  @ous_kyoto" data-def="1">
+    <td data-v="1783334847000">2026/07/06</td>
+    <td class="example"><a href="https://www.instagram.com/p/DacthY8iarR/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/731711714_17900285403465938_2688420468265613908_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Dreie5-5L0QQ7kNvwEAY2tZ&amp;_nc_oc=AdpfQ0kKYfmRbPS36rod7lxuFmFX4PtEBvE9UieX8nr6wjz09IS3jQvgd4LOZO4WkPfnhgSYdXY9uO437zcDzhXe&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQG6bM0coek1_QVtZl032_MjIpDr8zerDLXv_E6e9ksxyKxSBDNEzBiUDDv9muX8gngaBAG5lrP6&amp;oh=00_AQCPOtJkTqRfHPHVJvfNi8DOJ9nMz0_euUDgw_H-d9uTew&amp;oe=6A5A2429" loading="lazy" alt=""><span>こんなとこにほんまにある？って場所にあるカフェ。 遠かったけ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="899"><strong>899</strong></td>
+    <td class="num" data-v="8">8</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="27">27</td>
+    <td class="num hide-sm" data-v="33.19338693797177">33</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="鎌倉旅行行く時は是非！
+ホテル全体が木漏れ日たっぷりで可愛すぎるし、オシャレな朝食ついて一万円台から泊まれるのすごいよね〜
+
+📍神奈川　鎌倉　@birdhotel_gh" data-def="0">
+    <td data-v="1776481323000">2026/04/18</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXQddnyicOS/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670900118_17888716953465938_7159456260180515358_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ZxPmHowmHm0Q7kNvwGJhPKT&amp;_nc_oc=AdprArnyKynvzf2Hg2ZyUruK-3RLM0Dz5qf271jMFMfk2AJHOAKhusoYhhycCSyxiVTurREXamyxZC3G_wEoXBSA&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGKxddl2FMlNsUbDgfYABFZ77cEtYU0Zpoy9URa_W3W_K8dfXeTnrfTGJWA42dwf9rg1voQKfrv&amp;oh=00_AQDouu4VAVAO_2SB40W65guu55biKu6ydzqSsXTlouClGw&amp;oe=6A5A084E" loading="lazy" alt=""><span>鎌倉旅行行く時は是非！ ホテル全体が木漏れ日たっぷりで可愛す…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="756"><strong>756</strong></td>
+    <td class="num" data-v="9">9</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="22">22</td>
+    <td class="num hide-sm" data-v="30.057761732851983">30</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="ジンジャーソーダもいちごティラミスもめちゃくちゃ美味しかった🍓
+こんなに素敵なカフェなのに貸切状態やったから穴場なのかな？？
+
+📍大阪　忠岡町　@_________i.am" data-def="0">
+    <td data-v="1780308007000">2026/06/01</td>
+    <td class="example"><a href="https://www.instagram.com/p/DZCgXRYCUHb/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/710079070_17895184260465938_1612014381928321267_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=3vRtfPoACksQ7kNvwHqqxjZ&amp;_nc_oc=AdpXHNlHBLSAk116YL2lbMeO2nnuvycQVt3V-MuRVJ9gJYi-SkjWb3DGHWYomPrakWHRJIjjouzxkPdDhhfCFVgi&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQH5x10OWgsd2cKt6bPO4fUw-Yj9yu3XSqFZeCHQjFj3Mttoj_KsVyF0PZy_tCmJOVeiImN_wOBz&amp;oh=00_AQBISXUX18V4btshiX1tfgBPGBtZePO5QgPcJU9WUWhZJg&amp;oe=6A5A1BB1" loading="lazy" alt=""><span>ジンジャーソーダもいちごティラミスもめちゃくちゃ美味しかった…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="753"><strong>753</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="1">1</td>
+    <td class="num" data-v="28">28</td>
+    <td class="num hide-sm" data-v="38.080981293075155">38</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="・
+このボリュームでこの金額はすごい！
+神戸でランチコース食べたかったらここおすすめ🐟
+
+📍兵庫　神戸三宮　@dining_social" data-def="0">
+    <td data-v="1778150411000">2026/05/07</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYCM_o0Cd5T/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/683719668_17891538153465938_8024614202755548824_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=r0IkWFRZygcQ7kNvwGzX5a3&amp;_nc_oc=AdrX1ShOaAhTWqxWe2PjTti3ExlTz4U5UsaAmMnk9j0adgmyzEif0Ycdp4CN0mFWft605D-23OJFBxM6HuV2g-f1&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHkG0yo51ix-DbpKHLqdia7YoV338-RQKGVS9Sx9KxU9v93wmbxVADfms2PC3SUiVT0Jp4ExMHp&amp;oh=00_AQBvRWRJm7SHniq73mzDNA8_t4DDTgdjMTo5TJOpUr2uQQ&amp;oe=6A5A2C30" loading="lazy" alt=""><span>・ このボリュームでこの金額はすごい！ 神戸でランチコース食…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="683"><strong>683</strong></td>
+    <td class="num" data-v="3">3</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="18">18</td>
+    <td class="num hide-sm" data-v="21.683377092221857">22</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="抹茶クリームラテなる飲み物、あまりにも美味しくてもはや食べ物やった🍵
+
+📍大阪　本町　@ourlog___" data-def="0">
+    <td data-v="1775958619000">2026/04/12</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXA4e4oCbYM/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670352498_17887910565465938_6514866147649618166_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=JTk02cDHwWYQ7kNvwHR1i0N&amp;_nc_oc=AdqltMSHoKtQPvUUUl_O-nOueRLfR4acgeWzzEv6Flmd9FiTCMvuWf8nsWwNUUn9MWaG_QP2X8K0xwdEEnSu8Uq9&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQENutwzYc_VeR8Eei2rHCPqZUm4j5zjHxS5Q2Rw_pCdkrGUzS-gA7uK7X1sWWXCOsr02UAPT8F5&amp;oh=00_AQBJf4KtfMWRNe7z-rDDePBcbkuOUdWAraEK7an3ZmFZ5Q&amp;oe=6A59FDFB" loading="lazy" alt=""><span>抹茶クリームラテなる飲み物、あまりにも美味しくてもはや食べ物…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="667"><strong>667</strong></td>
+    <td class="num" data-v="3">3</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="20.776911716442402">21</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="三宮といえば！ってお店☕️
+夕暮れ時の光が柔らかくなる時間帯がおすすめ！
+
+📍兵庫　神戸三宮　@cafeandbaranthem" data-def="0">
+    <td data-v="1777554000000">2026/04/30</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXwbbniCX0U/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/682818276_17890401636465938_8865452881242564146_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=4afWCMkskr8Q7kNvwFvP57P&amp;_nc_oc=Adqu3WcDaeYF0vFV32IP_TGrJUn7sFDPwNekdBgtm7tCk-rcGL3tGrIre3K287G9ZnuhIVmlpeQLXzKN9wusyWfn&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGX4pxU5O9M7tx79wmFiwucwhtftvAgf9ukRqZo-MYqZRx0f6p0hv7FY1PO808PO7ujreO8BVUj&amp;oh=00_AQDr_jLxWPtetb5ByrvAYC4WQgR7JXiNvi7nbmCRbyZmgw&amp;oe=6A5A20B7" loading="lazy" alt=""><span>三宮といえば！ってお店☕️ 夕暮れ時の光が柔らかくなる時間帯…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="663"><strong>663</strong></td>
+    <td class="num" data-v="2">2</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="13">13</td>
+    <td class="num hide-sm" data-v="19.323022645224807">19</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="吹き込んだ音を波状にデータ変換して刺繍に！
+子どもが生まれた時の音声や、名前、記念日などを入れても思い出残ってめっちゃいい！！！！
+職人さんが丁寧に色味のカウンセリングもしてくれました🫶
+
+📍　@jogimagi_official" data-def="0">
+    <td data-v="1771841004000">2026/02/23</td>
+    <td class="example"><a href="https://www.instagram.com/p/DVGKwVcASYg/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/637699076_17881227192465938_8965291454129140884_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=sN4MjeduvrUQ7kNvwF-hedy&amp;_nc_oc=AdrDiCpmdwylzf4WhibF8eGl9lHq1TBRypYxIznGh5JZ6yC0Lg8Y3wJ_-IG5sSSVZNdCieIJQI92cqUWujSdvhN8&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEfPCudIgAYXMuDDV5hvtqnUQwwv4Yw1cN0rq5eAtUb07hwFQC9NGnXNxelnjAcjMPg3H2lV3sD&amp;oh=00_AQDY9XT6vEFg31KJnJ9zdpQKPedVQsi6pTStUWWmgWVJkQ&amp;oe=6A5A2246" loading="lazy" alt=""><span>吹き込んだ音を波状にデータ変換して刺繍に！ 子どもが生まれた…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="651"><strong>651</strong></td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="21.41590088611749">21</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="お家カフェした☕️
+抹茶のモンブラン美味しかった〜！
+
+@hanafru_official" data-def="0">
+    <td data-v="1776508771000">2026/04/18</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXRR0LsiZCt/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670300607_17888762598465938_4537106340388183671_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=cq9QYfTNrUoQ7kNvwFejhIe&amp;_nc_oc=AdpzxEPmr4b1Fpe9ctz-NMipBkxO05HlVLRHNgQqEmH26xS2ol6V7fyebt-Ju4eCI7gn6xWVSET1Ui4g-lJc3bJA&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEy5RUmx8H7c0txLELl3r_-UVb7yKtrCKifuxtnBPbSofe7pc_AewG8VzH2Y2TwKtv_mh6ks2Q_&amp;oh=00_AQBRfigj_gM3DGSrr4NiKU-ivEZPQ3Vm3sDsvlDT0mYkDA&amp;oe=6A5A2A89" loading="lazy" alt=""><span>お家カフェした☕️ 抹茶のモンブラン美味しかった〜！ @ha…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="617"><strong>617</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="14">14</td>
+    <td class="num hide-sm" data-v="17.466934689858878">17</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="本当にこんなとこにあんの！！！？っていう細い道の奥の方にポツンとあるお店。
+あまりにも全てが洗練されてて、見てるだけでも楽しかった👀
+
+📍滋賀　甲賀市　@nota_shop" data-def="0">
+    <td data-v="1777454771000">2026/04/29</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXteKrxibWh/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/682625768_17890381722465938_1032811713603657776_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=0PIFrhXQB9EQ7kNvwE_mNQy&amp;_nc_oc=AdrmyF7XQ6iwPu_cBjyotpevd9hw1-2MmOM0RyZ4Un-i7UaAeLsT0saO17hfY7xv11iMQbr-2tJ7PbUg5Bcsnf2m&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQF0_KyCuzHoxaeqW1gPTtLxUkVWgsqiYRKYwtjhwUIWovhIFmqgAXol6JDai-KPtflqDOLufh7b&amp;oh=00_AQCCNTtBc9XTIvYgWTZfwwqAcTtcI4IzZwAHHvDeaMyzZQ&amp;oe=6A5A04E7" loading="lazy" alt=""><span>本当にこんなとこにあんの！！！？っていう細い道の奥の方にポツ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="607"><strong>607</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="11">11</td>
+    <td class="num hide-sm" data-v="16.695848375451266">17</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="いちごのパフェおいしかった🍓
+
+📍大阪本町　neji @neji.kyomachibori" data-def="0">
+    <td data-v="1779015600000">2026/05/17</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYb_SlgCS8K/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670349768_17892819585465938_9160802401897429099_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=109&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=iw2sbxyrLlcQ7kNvwGpM6q7&amp;_nc_oc=AdrGgRfU0fuNNGnhveImz-fiTYVoqh95ne3Ln-r0VlunQbXx0CkaXkAYiA2BxI5nYEZmoC1rQujFPs4KTZZT3LsY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFhOgV8_dQ66_vDdVaNvqs0kKF5MARr_E0d6caJJOsePFOI8YFj2etUr78guI-5D-eVsMBi5zFx&amp;oh=00_AQD2VaUMeETVoXGzZi8dr-DQfAOlWNRtR5UGJf7UZbZQWQ&amp;oe=6A5A249C" loading="lazy" alt=""><span>いちごのパフェおいしかった🍓 📍大阪本町　neji @n…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="591"><strong>591</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="16">16</td>
+    <td class="num hide-sm" data-v="17.243928454217265">17</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="台湾旅行でぜーったいにふざけた可愛いtシャツ買いたくて、探し回って見つけたtシャツ。
+舐め腐った顔した犬の顔がイカしてるぜ…🐶
+
+📍台湾　台北　@par_store" data-def="0">
+    <td data-v="1777863600000">2026/05/04</td>
+    <td class="example"><a href="https://www.instagram.com/p/DX5qDzJiVEh/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/682860702_17891006247465938_986150310403713716_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=27U2ITMh_usQ7kNvwHCRFAr&amp;_nc_oc=Adr5tTeRUfoHO4WJiSa059VZpuulOQtIF6-l-s2nU3mNu2CRXdtjFT9pbFxY-LKzS6ezsLlS62CCzHO411j3G1c5&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQF5V2_jEHTUvV_qjMRC2W8KlS65ANhqGnDB9fgxTDC4zUXEo90BNdDYMBYWaTDxP7Eamxv4qvd7&amp;oh=00_AQDgolJ3TRaFRErkwxYd4VKAPD3FY8yzfIz-Oaj2Zecdjg&amp;oe=6A5A2A6C" loading="lazy" alt=""><span>台湾旅行でぜーったいにふざけた可愛いTシャツ買いたくて、探し…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="534"><strong>534</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="15.230554643912045">15</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="かっこいい施設っぽいな〜気になるから行ってみよ！くらいの気持ちだったことを反省するくらい、物作りに真摯に向き合っている方々の素晴らしい施設・ホテルでした。
+次行く時は宿泊で伺います🥲
+
+📍大阪　和泉市　@tactile_house_osaka" data-def="0">
+    <td data-v="1780221602000">2026/05/31</td>
+    <td class="example"><a href="https://www.instagram.com/p/DY_7iUTCfRw/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/712410250_17895003804465938_1001550458518774882_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=gqfq7sTgAkoQ7kNvwHfRbru&amp;_nc_oc=AdrM-XDS0nibPWdTq2yhyPHfKiDjy-21zkT-tvQKTUnxjXQfaya4UcmE9hwe_klVguEbxByjuwB8G4ED1TM4K2f1&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGqcmo5VlXp0yWej21kvehGcZFZBNrO7iSvjTlbGDGdj9eAVrLtWocQVDI4Rahz8vYGric4Knpr&amp;oh=00_AQCKR1Czs60nTiDk5ByJUSBuwdD2kmn6E-AgNgACo9t3kw&amp;oe=6A59FCD0" loading="lazy" alt=""><span>かっこいい施設っぽいな〜気になるから行ってみよ！くらいの気持…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="506"><strong>506</strong></td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="17.598785690843453">18</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="南大阪にこんな素敵なインテリアショップがあるなんて、もっと早く気付きたかった！
+ようやくローテーブル探しの旅は終わりました✌️
+
+📍大阪　和泉市　@antry_inc" data-def="1">
+    <td data-v="1782129747000">2026/06/22</td>
+    <td class="example"><a href="https://www.instagram.com/p/DZ4y-abCQnW/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/726859474_17898203595465938_8849603786712298661_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=QsnE5gol0scQ7kNvwFsw-iS&amp;_nc_oc=AdpRrzyKO6-RdrioO7ZVmbVCY8X_9Z0L18bAf8iJUxDOeF1E0xkYOL-B1wp2PT9w7_T_CthBldgjxi6jhGRWZHAS&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEslk9T0vkR4eZH3XPE_mcf5ZiUpKJ5WeRln-J7-k1rDjHac1feYcXTh8i1cS6UIeblHADzbpqT&amp;oh=00_AQCoxmsADQw8zuohoO_VjNL83mwEC9T53xIQgrI6TqK9OQ&amp;oe=6A5A1DB7" loading="lazy" alt=""><span>南大阪にこんな素敵なインテリアショップがあるなんて、もっと早…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="504"><strong>504</strong></td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="17">17</td>
+    <td class="num hide-sm" data-v="21.46275024614375">21</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="こんなにもワクワクする服屋さんあるかな？
+めちゃくちゃテンション上がった！
+天気いい日の光の差し方がすごく綺麗らしいから、次は天気がいい日に行きたいな〜
+
+📍大阪　北堀江　@graphpaper_osaka" data-def="0">
+    <td data-v="1778235177000">2026/05/08</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYEurEXCZ_Z/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/687678770_17891669913465938_7659447568130282347_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=106&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=sqsL1Iu8jloQ7kNvwFU-J8_&amp;_nc_oc=Adrzp0nZyI3Fb40sQWPUYvcsq-BVG2S6ObbdgPAYNnaUd5jiPT-VVjA_ABjKZSrh23G8imKvSiupNVaQHXxMvMNh&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQF4nzMYDcBssIyVLdxqY8otxVjmEZFWcaeDXiLO9935qVOu7qEpupfvUPkBdk_x2oOyczPi6PCf&amp;oh=00_AQCe91t-JmB7oIdtFgQg7VzvS8-SjQrEA_Z9xHXgaAD5Lg&amp;oe=6A5A2642" loading="lazy" alt=""><span>こんなにもワクワクする服屋さんあるかな？ めちゃくちゃテンシ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="493"><strong>493</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="13.305464391204463">13</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="光と影、そして内装が美しかった☕️
+
+📍東京　代官山　@bluebottlejapan" data-def="0">
+    <td data-v="1776852000000">2026/04/22</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXbgeKpiRK6/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670252863_17889201657465938_1291008990744977480_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=_quDr33detAQ7kNvwE6d19v&amp;_nc_oc=AdrHoDwQC2zNaeLCzYvcA-DF_gL5S7ze_pySXU7sdfu2czvdBOfWMTq26ZhsESifYWQ7p8zX4fDLXnUB70-vmeKs&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHYoYAoxyj4_YFs5wEpMDlWw77HwgBPQ11ZYPZNz-6wRk9tmzbXRZFMwA4f3kUxyX2i0BFXwpsU&amp;oh=00_AQAYl_Ob4Z8UjQbdFYUYUb44Sr1RI8p5UhADC6sC2KhWlQ&amp;oe=6A5A2090" loading="lazy" alt=""><span>光と影、そして内装が美しかった☕️ 📍東京　代官山　@bl…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="414"><strong>414</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="13.068427961929766">13</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="見た目も味も美味しかった🍓
+
+@ichigo_waltz" data-def="0">
+    <td data-v="1777546500000">2026/04/30</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXwNMpuCSvw/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/684705391_17890503423465938_1612339937689702291_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=xsyxQvV0aTIQ7kNvwEJPgNZ&amp;_nc_oc=AdpeeDkPsDEFidEq2YNRIxqET3pKU07rvCnW4hW6EOwOuaWwr6T_fE8LoMgIFONabluthVFUaRHD2YvOizN4DB1f&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGTL8oTzmp-O1exBlC7xE81m5KWR3UvtLZ0ZDx455NLAOAMLd448egqGmXPMapQbiQDZScA89yJ&amp;oh=00_AQCyuWa83iSw49X130BD0rUd2apsKJJkao3wR-xPShrxjQ&amp;oe=6A59F8D3" loading="lazy" alt=""><span>見た目も味も美味しかった🍓 @ichigo_waltz</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="412"><strong>412</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="11.568756153593698">12</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="可愛すぎるガチャ、ゲットだぜ🔴🔵
+
+#hongama" data-def="0">
+    <td data-v="1778939574000">2026/05/16</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYZuNAyCdEn/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670384704_17892818325465938_8249232922837867305_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=5f-6OkMauHUQ7kNvwHqGVYj&amp;_nc_oc=Adrqbtc_hN0r6KzsMQ-2lGlNsOdaCt_F83V3eoC2Z_IQml7o_-qkSYw_Oi343jza9Tac8_ux-kxPEIjg5oQMZz6X&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFbWgr-6mM3jQm0wncPvMqMnagp3YpATWWSDJyaTGWmvmxhOfcxrUfQKMrtj0GULob0AUcEB5qo&amp;oh=00_AQAc-9abGUD3bzXa-erdU8eX0fuiFfvaZpgWNi_rm-88ew&amp;oe=6A5A2323" loading="lazy" alt=""><span>可愛すぎるガチャ、ゲットだぜ🔴🔵 #hongama</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="341"><strong>341</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="10">10</td>
+    <td class="num hide-sm" data-v="9.512225139481458">10</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="抹茶のチーズケーキ、苺のソースとも相性良くてめちゃくちゃ美味しかった！！！
+お茶の販売所に併設されてるイートインスペースで、お茶の飲み比べもできるからこのセットがおすすめ。
+お茶もたくさん購入しちゃいました🍵
+
+📍京都　和束町　@wazukacha.cafe" data-def="0">
+    <td data-v="1777201200000">2026/04/26</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXl6henCXWY/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/681364552_17889937458465938_1639008247183732746_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=E--x3EWJCokQ7kNvwFUobl1&amp;_nc_oc=Adq6ZjLgAEM8XiRgqNYcz7Ox2Dmk9hQnMaM2GRQsVno89IROJ2_FhVxd0Q9lm_aG0z3bymoN59Sf2nqCkCI9gwZv&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEK2sHiLyIU3gdnGhxqFfYyMcwe93apqT9IFRDR0T7Of3Th64OgANsn4i1v0kA147ZA6pDgYgQv&amp;oh=00_AQCvK5U_riNqWzJWc01qCB3tdVKc2kyOYMyrAG7VNngrHg&amp;oe=6A5A1971" loading="lazy" alt=""><span>抹茶のチーズケーキ、苺のソースとも相性良くてめちゃくちゃ美味…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="304"><strong>304</strong></td>
+    <td class="num" data-v="2">2</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="11">11</td>
+    <td class="num hide-sm" data-v="10.859205776173287">11</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="・
+習瑞鎮商行xjz living firm
+
+はじめて食べた牛肉麺が美味しくて感動🍖
+ミルクティー美味しすぎてリッターで持って帰りたかった、まじで。
+
+第一次吃牛肉麵，好吃到感動🍖
+奶茶也太好喝了，真的想直接裝一公升帶回日本。
+
+📍台湾　台北　@xi.jui.zhen_livingfirm" data-def="0">
+    <td data-v="1778236200000">2026/05/08</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYEwqacCbrg/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/687281768_17891540211465938_1112027580143589287_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=MToxAunJj0YQ7kNvwEm3xO5&amp;_nc_oc=Adr6Uj_WDB85pL2wot94a0cKR4A9zeKQenFVA236CPBvU6gPCQKgikmbawZSoSkfQH9OGXWbm2jJk3xRKbiiR_Hu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEvKgbS7E8vBv3DGIjnKo18vba52dkn0HZaRirHRy7K2mA60HienBsVF_p3XvJMYK3F6kIcytyU&amp;oh=00_AQCSj8mqqCg58w3lprXTdVZ3YEWjxik-TmTq8hqrUNX-BA&amp;oe=6A5A167D" loading="lazy" alt=""><span>・ 習瑞鎮商行XJZ living firm はじめて食べた…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="301"><strong>301</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="9.51878897276009">10</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="我が家に新しいローテーブルが来た！！！
+購入は　@antry_inc で！
+これ二つで10万切るのはすごい！ありがたい！はっぴー！" data-def="1">
+    <td data-v="1782292501000">2026/06/24</td>
+    <td class="example"><a href="https://www.instagram.com/p/DZ9pb8biSkD/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/727518556_17898429273465938_2803515221536370918_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=B2Yj4GydHBYQ7kNvwEMoB_W&amp;_nc_oc=AdrFVgwbPQfTEsNfy71hHqtErAi6Hct8YkGCaigdAWoCPQP0FRV8U3KrmvkHwJ1UevsuSNUNYrrmjPKvN6HcJv-6&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHtEjEtwsp0XP8ObhQp32Z3URW6QlLMhfPSSGVmqDV-1YYwjed1gJyUck-EMTCEe6Nq0matvvlh&amp;oh=00_AQA6-gBVhpYYNcFzPwhik4oB5H7hEBEcXksk1K7ofoGWfA&amp;oe=6A59F91D" loading="lazy" alt=""><span>我が家に新しいローテーブルが来た！！！ 購入は　@antry…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="212"><strong>212</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="10">10</td>
+    <td class="num hide-sm" data-v="6.601575319986873">7</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="ものすごい数のお茶から選べるお茶カフェ🍵
+予約必須です！！
+
+a tea café where you can choose from an incredible variety of teas 🍵
+reservations are a must!!
+
+📍京都　東寺　kyoto toji　@0ma_kyoto" data-def="1">
+    <td data-v="1783674002000">2026/07/10</td>
+    <td class="example"><a href="https://www.instagram.com/p/Dam0fO3iXpB/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/735089766_17900318064465938_7199445748650447373_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Uzy1QywRsmkQ7kNvwGzkM-1&amp;_nc_oc=AdoSqOIdPl3YV60DwhpuEcAN6mt1YE3WfrG8CYC92Y79SET-QI7wUgZ2k-0xzttw_4SxeRVBAiKYbTfvopemKPfS&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFBwQ6cAh6f-BmfXFe1QUVSmxqAD5PjkWebGvs3qVaUSILzeYxqNRRzaDy4k5mkML7G_dFr0iEx&amp;oh=00_AQBCbLSx7BtfAGDMVMvmL66A3wtrG0MElHhSiQKggNFdAw&amp;oe=6A59FA74" loading="lazy" alt=""><span>ものすごい数のお茶から選べるお茶カフェ🍵 予約必須です！！…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="161"><strong>161</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="9">9</td>
+    <td class="num hide-sm" data-v="6.269035116508041">6</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="可愛いクリームソーダと本を静かに楽しめるカフェ、梅田からすぐ近くなのに落ち着いたエリアなのも推しポイント💡
+
+a cute café where you can quietly enjoy a cream soda and a good book.
+it’s just minutes from umeda, yet tucked away in a peaceful neighborhood—that’s one of my favorite things about it.
+
+📍大阪　福島 ／ osaka fukushima @awaiyabooks" data-def="1">
+    <td data-v="1783849049000">2026/07/12</td>
+    <td class="example"><a href="https://www.instagram.com/p/DasCSKRiSZS/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/746068922_17901137109465938_1959827059659323526_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=zBFwGqiPnz0Q7kNvwE_3nx4&amp;_nc_oc=AdobHXJ2zxjHORIY2tNkMPjX5GyYeDKHZoYezWQhOvbwFhm_Ocbp1TXWiqOeOiHavEzrc49gFzCQ0qJ4eTJ38VlY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHZvULYWou7dcxEPtdfS6xLzCqeoouBgY1d9yr2T4nqLDcLGCo1UcyUK1CzcL2A65bSNVgAIE5C&amp;oh=00_AQB7_8jv5VxfYoQ_IXWM_OUJ2BtVy2ykXSutCpuYsyA25g&amp;oe=6A5A0730" loading="lazy" alt=""><span>可愛いクリームソーダと本を静かに楽しめるカフェ、梅田からすぐ…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="156"><strong>156</strong></td>
+    <td class="num" data-v="3">3</td>
+    <td class="num hide-sm" data-v="2">2</td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="22.792582868395144">23</td>
+  </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>アカウントサマリー</h2>
+<div class="summary-grid"><div class="summary-card"><div class="s-label">投稿数</div><div class="s-value">36</div></div><div class="summary-card"><div class="s-label">フォロワー</div><div class="s-value">230</div></div><div class="summary-card"><div class="s-label">平均閲覧数</div><div class="s-value">979</div></div><div class="summary-card"><div class="s-label">中央値閲覧数</div><div class="s-value">675</div></div><div class="summary-card"><div class="s-label">平均保存</div><div class="s-value">5.3</div></div><div class="summary-card"><div class="s-label">平均保存率</div><div class="s-value">0.54%</div></div><div class="summary-card"><div class="s-label">平均コメント</div><div class="s-value">0.1</div></div><div class="summary-card"><div class="s-label">平均いいね</div><div class="s-value">18</div></div></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>改善優先順位</h2>
+<p class="section-note">データから機械的に導いた提案です</p>
+<ol class="recs"><li>平均保存率が 0.54% と低め。→「後で見返したくなる」まとめ・スポット情報・設定値などの保存価値を</li><li>投稿時間帯は「昼（11-17時）」が最も反応が良い。→ この時間帯に寄せる</li><li>投稿頻度が月 6.0 本。→ 週2〜3本（月8〜12本）が安定圏</li></ol>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>月別トレンド</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>月</th><th>投稿数</th><th>平均閲覧数</th><th></th><th>平均保存率</th><th>フォロワー</th><th>増減（増加率）</th></tr></thead>
+    <tbody><tr>
+    <td>2026-02</td>
+    <td class="num">3</td>
+    <td class="num"><strong>1,173</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:54%"></div></td>
+    <td class="num">0.81%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-03</td>
+    <td class="num">5</td>
+    <td class="num"><strong>2,160</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:100%"></div></td>
+    <td class="num">0.59%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-04</td>
+    <td class="num">13</td>
+    <td class="num"><strong>875</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:41%"></div></td>
+    <td class="num">0.48%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-05</td>
+    <td class="num">8</td>
+    <td class="num"><strong>630</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:29%"></div></td>
+    <td class="num">0.32%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-06</td>
+    <td class="num">3</td>
+    <td class="num"><strong>490</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:23%"></div></td>
+    <td class="num">0.51%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-07</td>
+    <td class="num">4</td>
+    <td class="num"><strong>763</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:35%"></div></td>
+    <td class="num">0.91%</td>
+    <td class="num"><strong>230</strong></td><td class="num muted">—</td>
+  </tr></tbody>
+  </table></div>
+  <p class="section-note" style="margin-top:10px">※ フォロワー数の記録は 2026-07-12 開始。翌月以降「+◯人（+◯%）→ 合計」が積み上がります</p>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>投稿種別 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>カルーセル</td>
+      <td class="num">35</td>
+      <td class="num"><strong>964</strong></td>
+      <td class="num">5.4</td>
+      <td class="num">0.1</td>
+      <td class="num"><span class="lift lift-flat">-1%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>ハッシュタグ分析</h2>
+<p class="section-note">3回以上使ったタグを平均閲覧数順に表示</p>
+<p class="muted">同じハッシュタグを3回以上使うと、タグ別の成績が表示されます</p>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>ライティング分析</h2>
+<p class="section-note">キャプションの構造と成績の関係</p>
+
+  <h3 class="sub-title">キャプションの長さ × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>短文（100字未満）</td>
+      <td class="num">25</td>
+      <td class="num"><strong>1,107</strong></td>
+      <td class="num">6.1</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+10%</span></td>
+    </tr>
+<tr>
+      <td>中文（100-300字）</td>
+      <td class="num">10</td>
+      <td class="num"><strong>668</strong></td>
+      <td class="num">3.1</td>
+      <td class="num">0.2</td>
+      <td class="num"><span class="lift lift-neg">-27%</span></td>
+    </tr></tbody>
+  </table></div>
+  <h3 class="sub-title">ハッシュタグの数 × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>タグなし</td>
+      <td class="num">34</td>
+      <td class="num"><strong>969</strong></td>
+      <td class="num">5.5</td>
+      <td class="num">0.1</td>
+      <td class="num"><span class="lift lift-flat">-1%</span></td>
+    </tr></tbody>
+  </table></div>
+  <h3 class="sub-title">締めの呼びかけ（CTA） × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>CTAなし</td>
+      <td class="num">36</td>
+      <td class="num"><strong>979</strong></td>
+      <td class="num">5.3</td>
+      <td class="num">0.1</td>
+      <td class="num"><span class="lift lift-flat">+0%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>投稿時間帯 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>昼（11-17時）</td>
+      <td class="num">3</td>
+      <td class="num"><strong>1,006</strong></td>
+      <td class="num">12.7</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+23%</span></td>
+    </tr>
+<tr>
+      <td>夜（17-23時）</td>
+      <td class="num">32</td>
+      <td class="num"><strong>987</strong></td>
+      <td class="num">4.7</td>
+      <td class="num">0.1</td>
+      <td class="num"><span class="lift lift-flat">-1%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>曜日 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>月曜日</td>
+      <td class="num">9</td>
+      <td class="num"><strong>1,093</strong></td>
+      <td class="num">6.9</td>
+      <td class="num">0.1</td>
+      <td class="num"><span class="lift lift-pos">+21%</span></td>
+    </tr>
+<tr>
+      <td>日曜日</td>
+      <td class="num">10</td>
+      <td class="num"><strong>1,022</strong></td>
+      <td class="num">5.8</td>
+      <td class="num">0.2</td>
+      <td class="num"><span class="lift lift-pos">+11%</span></td>
+    </tr>
+<tr>
+      <td>木曜日</td>
+      <td class="num">6</td>
+      <td class="num"><strong>1,043</strong></td>
+      <td class="num">6.7</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-flat">+7%</span></td>
+    </tr>
+<tr>
+      <td>土曜日</td>
+      <td class="num">4</td>
+      <td class="num"><strong>1,292</strong></td>
+      <td class="num">3.0</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-10%</span></td>
+    </tr>
+<tr>
+      <td>金曜日</td>
+      <td class="num">4</td>
+      <td class="num"><strong>636</strong></td>
+      <td class="num">4.3</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-30%</span></td>
+    </tr>
+<tr>
+      <td>水曜日</td>
+      <td class="num">3</td>
+      <td class="num"><strong>411</strong></td>
+      <td class="num">0.7</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-60%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>保存されやすい投稿</h2>
+<p class="section-note">閲覧数が中央値以上の投稿を保存率順に。「後で見返したい」価値が高い投稿</p>
+<div class="cards-grid">
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWc-d8uCQQR/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/656863624_17885980941465938_465580198798316552_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F-nIhjfB7OYQ7kNvwHG3QBO&amp;_nc_oc=AdptcPCIKeQU_KHfaZ-eh7TgBVq_ItnkbRIlncCet-GnZdmjDHsJX3iZ5kR9a-45bD4dvFj1K4DG0McH4NTzlNxr&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGSe4oNAe21FbItNIPJGpqmWWb_xBj3lB7YUi7-W0ziiM93WVXvlXQQARjN-bOG6JpEELdkBr9D&amp;oh=00_AQBgwnRCQrfpioMYwwQKahcCLqMlSdFbZUH_L__QiqCcEA&amp;oe=6A5A00A0" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/29 12:09</span>
+      </div>
+      <div class="card-preview">桜が綺麗な時期に行けて幸せでした🌸 @chillskyoto.ig</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,728</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">28</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">22</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.62%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">68</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWc-d8uCQQR/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">アンバー</span><span class="ai-chip">テラコッタ</span><span class="ai-chip">黒</span><span class="ai-chip">夕方の斜光×間接照明</span><span class="ai-chip">光のラインで対角線分割・余白大</span><span class="ai-chip">ムーディー・暖色</span><span class="ai-chip">照明×壁の陰影（空間の空気感）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>この空間に行きたい保存＋「照明だけでこんな絵になる」という構図の学び。保存28は場所メモの証拠</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>料理より「空間の空気感」を1枚目に置く</li><li>光と影の境界線を構図の主役にする</li><li>桜の時期など「行くべき季節」も書く</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>雰囲気カフェ好き・インテリア好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWoH1aYicZG/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/659215063_17886628740465938_5091005740240236357_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=eFubGKD0M8QQ7kNvwG1Na3d&amp;_nc_oc=AdomxSM_FgJaZk_-kRN0PkobXgQaErGWh4OiqjO3JD_NIBaXA1iHo035CXMdP_IBJ0oP_DlWrzy_v53mG8p9keBK&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGZDa1P_l9kT1Nz1D_DLtsEvyXsPLkCNl26SacbRAtCnRtS_B4sSRHlNP4cZFP_macXAp2VefkY&amp;oh=00_AQBI3GSNqQD74gE6yuY-xzE_WSINnlnIDrzZukvi37ibnQ&amp;oe=6A5A0AFF" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/04/02 20:03</span>
+      </div>
+      <div class="card-preview">あまりにもかっこいい内装に興奮が止まりませんでしたワ 📍京都　@koan.kyoto</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,728</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">25</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">18</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.45%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWoH1aYicZG/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">グリーン</span><span class="ai-chip">グレー（石）</span><span class="ai-chip">日中の自然光・木漏れ日</span><span class="ai-chip">中央・引きで環境ごと見せる</span><span class="ai-chip">ナチュラル</span><span class="ai-chip">店の看板×日本庭園</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「かっこいい内装」の期待値を上げる導入。店名が読める写真は保存＝行き先メモ</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>入口・看板カットは「保存して後で行く」ための実用情報</li><li>店名ロゴが読める距離感で撮る</li><li>興奮を素直に書くキャプションで感情を乗せる</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>京都のかっこいい space を探す層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DVGOAETAUzt/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/637767103_17881229229465938_8828567450305591647_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=GPRnk2-2LB8Q7kNvwHmiigV&amp;_nc_oc=AdrH8CyvqPZPd8r_gu1c7qX-xVe2-aFy6Xg0EeWIE_8m99yr_O3ytiaLOpOsCeWz5Ru70kVBJtm2b8dF2xoicLTy&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHRtxTqhotoDfKBIClVdBCGPIi7OsW5vT1XTNC9ABAT7bsCKEpfGtq9NidcfVXMU3MGZa7_87O8&amp;oh=00_AQBJubQepjgecqO3uy36Y1QfIVHGtFIgYfndAqP_xQzHOg&amp;oe=6A59FDAF" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/02/23 19:31</span>
+      </div>
+      <div class="card-preview">ちょっとしたギフトにぴったりすぎる！ 紀州の梅干してビターチョコでコーティングしてるお菓子、めちゃくちゃ美味しかった🥲…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">910</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">12</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">5</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.32%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">33</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DVGOAETAUzt/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXQddnyicOS/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670900118_17888716953465938_7159456260180515358_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ZxPmHowmHm0Q7kNvwGJhPKT&amp;_nc_oc=AdprArnyKynvzf2Hg2ZyUruK-3RLM0Dz5qf271jMFMfk2AJHOAKhusoYhhycCSyxiVTurREXamyxZC3G_wEoXBSA&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGKxddl2FMlNsUbDgfYABFZ77cEtYU0Zpoy9URa_W3W_K8dfXeTnrfTGJWA42dwf9rg1voQKfrv&amp;oh=00_AQDouu4VAVAO_2SB40W65guu55biKu6ydzqSsXTlouClGw&amp;oe=6A5A084E" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/04/18 12:02</span>
+      </div>
+      <div class="card-preview">鎌倉旅行行く時は是非！ ホテル全体が木漏れ日たっぷりで可愛すぎるし、オシャレな朝食ついて一万円台から泊まれるのすごいよね…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">756</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">9</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">22</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.19%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">30</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXQddnyicOS/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DY6x_EMiQwm/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/708528508_17894722755465938_6149358998706070260_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F5OE--3AopkQ7kNvwElmGbF&amp;_nc_oc=AdqlmoBpdpNkNDEmAE0haTMKBnBqT_Ostzqo1R8NFivHDIsnDvKVvOg_6TFmrdm-M6kF3ulX8bNyFuu5iO1BCg5B&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGsC34v4dmBflPQNPmb240Gs1PpRG-FTlTswnJtqbhYAj6xWY1n09DGIk7ztLTzXycl_LxeyKH8&amp;oh=00_AQA6nqhSUYhbgMQwEzV-oxtJ5bZPpIRa6FC-U-9fBdkNfA&amp;oe=6A5A2B52" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/05/29 19:00</span>
+      </div>
+      <div class="card-preview">こんなとこ無料で行けちゃうんやったら通ってしまうよな、一回にスタバがあるのもかなりありがたい🪑 📍大阪　門真　@ka…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,590</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">16</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">25</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.01%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">56</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DY6x_EMiQwm/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ウッドベージュ</span><span class="ai-chip">グリーン（前ボケ）</span><span class="ai-chip">暖色照明</span><span class="ai-chip">夜の室内・暖色照明</span><span class="ai-chip">緑の前ボケ越し・奥行きのある斜め構図</span><span class="ai-chip">暖かいナチュラル</span><span class="ai-chip">施設の空間（図書館）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「無料で行ける」という実用情報が保存を生む。コスパ系スポットは保存率が高い</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>「無料」「並ばない」などのお得情報を冒頭に</li><li>前ボケで「覗き見」感を出し空間に誘い込む</li><li>施設×スタバなど組み合わせ情報も保存価値</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>お出かけスポットを探す層・学生・節約層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DacthY8iarR/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/731711714_17900285403465938_2688420468265613908_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Dreie5-5L0QQ7kNvwEAY2tZ&amp;_nc_oc=AdpfQ0kKYfmRbPS36rod7lxuFmFX4PtEBvE9UieX8nr6wjz09IS3jQvgd4LOZO4WkPfnhgSYdXY9uO437zcDzhXe&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQG6bM0coek1_QVtZl032_MjIpDr8zerDLXv_E6e9ksxyKxSBDNEzBiUDDv9muX8gngaBAG5lrP6&amp;oh=00_AQCPOtJkTqRfHPHVJvfNi8DOJ9nMz0_euUDgw_H-d9uTew&amp;oe=6A5A2429" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/07/06 19:47</span>
+      </div>
+      <div class="card-preview">こんなとこにほんまにある？って場所にあるカフェ。 遠かったけどそれでも行く価値があります、内装も素敵やったし野菜だけでこ…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">899</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">8</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">27</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.89%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">33</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DacthY8iarR/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>ベスト10（総合スコア）</h2>
+<p class="section-note">スコア = 閲覧数50% + 保存25% + コメント15% + いいね10%（上位5%基準で正規化） ／ 緑のブロックはClaudeが写真を実際に見て書いたAI分析（8件）</p>
+<div class="cards-grid">
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWgiB6niZjI/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/659036662_17886183147465938_8694104429961500763_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=0UKp8E2ZFYoQ7kNvwHBXsqf&amp;_nc_oc=AdpErnqKi2p6cPeU7nGpa5iOQuacIekvMyK6nT7y2yQqs5qiJj0E8VfF09R8WBXQLNdGMybdHvplicXN6OW19LxV&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEkMycP-HeNdi2Mw8pIrUWdVzNeP0TDEy2-DEwkirh6-w_hW2No-6PaVUF0u0u617CcaCPfQO3t&amp;oh=00_AQByluPYvl-JIlUWvEzo48rttHP9ntb3zPgMvjugUvlcyA&amp;oe=6A5A295A" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/30 21:18</span>
+      </div>
+      <div class="card-preview">美味しかった🍓 ほぼ0キロカロリーナリ @farmoon_kyoto</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">2,216</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">18</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">25</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.81%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">73</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWgiB6niZjI/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ストロベリーレッド</span><span class="ai-chip">シルバー</span><span class="ai-chip">ダークブラウン</span><span class="ai-chip">暗めの室内・スポット的な光</span><span class="ai-chip">寄り・暗背景で主役を浮かび上がらせる</span><span class="ai-chip">ダーク・ムーディー</span><span class="ai-chip">デザート（苺のパフェ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「このデザートを食べに行きたい」保存。@メンションで店に飛べるのも保存価値</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>暗い店内では主役だけに光が当たる角度を探す</li><li>店の@メンションを必ず入れる</li><li>「ほぼ0キロカロリーナリ」のようなゆるい一言で親近感</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>京都カフェ巡り好き・スイーツ好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWc-d8uCQQR/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/656863624_17885980941465938_465580198798316552_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F-nIhjfB7OYQ7kNvwHG3QBO&amp;_nc_oc=AdptcPCIKeQU_KHfaZ-eh7TgBVq_ItnkbRIlncCet-GnZdmjDHsJX3iZ5kR9a-45bD4dvFj1K4DG0McH4NTzlNxr&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGSe4oNAe21FbItNIPJGpqmWWb_xBj3lB7YUi7-W0ziiM93WVXvlXQQARjN-bOG6JpEELdkBr9D&amp;oh=00_AQBgwnRCQrfpioMYwwQKahcCLqMlSdFbZUH_L__QiqCcEA&amp;oe=6A5A00A0" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/29 12:09</span>
+      </div>
+      <div class="card-preview">桜が綺麗な時期に行けて幸せでした🌸 @chillskyoto.ig</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,728</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">28</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">22</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.62%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">68</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWc-d8uCQQR/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">アンバー</span><span class="ai-chip">テラコッタ</span><span class="ai-chip">黒</span><span class="ai-chip">夕方の斜光×間接照明</span><span class="ai-chip">光のラインで対角線分割・余白大</span><span class="ai-chip">ムーディー・暖色</span><span class="ai-chip">照明×壁の陰影（空間の空気感）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>この空間に行きたい保存＋「照明だけでこんな絵になる」という構図の学び。保存28は場所メモの証拠</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>料理より「空間の空気感」を1枚目に置く</li><li>光と影の境界線を構図の主役にする</li><li>桜の時期など「行くべき季節」も書く</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>雰囲気カフェ好き・インテリア好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWoH1aYicZG/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/659215063_17886628740465938_5091005740240236357_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=eFubGKD0M8QQ7kNvwG1Na3d&amp;_nc_oc=AdomxSM_FgJaZk_-kRN0PkobXgQaErGWh4OiqjO3JD_NIBaXA1iHo035CXMdP_IBJ0oP_DlWrzy_v53mG8p9keBK&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGZDa1P_l9kT1Nz1D_DLtsEvyXsPLkCNl26SacbRAtCnRtS_B4sSRHlNP4cZFP_macXAp2VefkY&amp;oh=00_AQBI3GSNqQD74gE6yuY-xzE_WSINnlnIDrzZukvi37ibnQ&amp;oe=6A5A0AFF" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/04/02 20:03</span>
+      </div>
+      <div class="card-preview">あまりにもかっこいい内装に興奮が止まりませんでしたワ 📍京都　@koan.kyoto</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,728</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">25</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">18</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.45%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWoH1aYicZG/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">グリーン</span><span class="ai-chip">グレー（石）</span><span class="ai-chip">日中の自然光・木漏れ日</span><span class="ai-chip">中央・引きで環境ごと見せる</span><span class="ai-chip">ナチュラル</span><span class="ai-chip">店の看板×日本庭園</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「かっこいい内装」の期待値を上げる導入。店名が読める写真は保存＝行き先メモ</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>入口・看板カットは「保存して後で行く」ための実用情報</li><li>店名ロゴが読める距離感で撮る</li><li>興奮を素直に書くキャプションで感情を乗せる</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>京都のかっこいい space を探す層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DV5x9gpiWK4/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/651510862_17883901641465938_1686897798754566819_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=uiaA-yc7H1wQ7kNvwGBeGoP&amp;_nc_oc=Adp-d5iDiqA5MQjooNaY8qpXigPVhbqjyksNy6Hw4lF6QjYnX0W28n9zv5mGtH5Z_UmYaSiokcukiaeGQteOLXHD&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQFsbwlKMQGcVOLawTZMiueI_WsINLbR-7qdfyDunc703fhoOAW2nMhhNpD38m6bgkIodMmUe2gX&amp;oh=00_AQDxUShjPaJzj1hrI0g-e5IRgOd8vG6KadpvFeYfP8wU3w&amp;oe=6A5A18F9" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/15 20:07</span>
+      </div>
+      <div class="card-preview">… 天満橋から徒歩8分、素敵な雰囲気のカフェでした☕️ @nova__jp</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">2,077</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">8</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">68</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.39%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">65</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DV5x9gpiWK4/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">アンバー</span><span class="ai-chip">ダークグレー</span><span class="ai-chip">夜の店内・電球のみ</span><span class="ai-chip">主役中央×枝で前景に奥行き</span><span class="ai-chip">ダーク・シネマティック</span><span class="ai-chip">照明ディテール</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>保存8=雰囲気鑑賞型。空間の世界観を伝える役割の投稿</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>ディテールカットはカルーセルの2〜3枚目に置く（1枚目は空間全体が強い）</li><li>最寄駅から徒歩何分の情報は保存価値を上げる</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>大阪カフェ好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DVGKXEJgSKT/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/637722555_17881226553465938_1207516242300380405_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=oWJbIbAA8r8Q7kNvwEiU7X4&amp;_nc_oc=Adro6mlJZ2JSa_1b33DknHJDdnPR6vl74Ogom1WnrQk0FGjwmXbuduFc71ya0-dQGrHmiDNLvG7FrTH58HBIH_1P&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQH1K77LKDrl444pth_FH7BTjNXZrmXY1v_a8GD8Ado1Fmr15q5qmP51SgoW2Ct1cqrdwM3Vx-qL&amp;oh=00_AQCDbNr8P2USYmTYMCkoEG6aYlwfaozVnuUicoYw1c5MoQ&amp;oe=6A5A00FB" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/02/23 18:59</span>
+      </div>
+      <div class="card-preview">お誕生日祝いに連れてってもらった🍰 ご飯も建物も何もかも美しすぎて頭抱えてました… 📍 @patinaosaka  …</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,957</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">4</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">55</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.20%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">58</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DVGKXEJgSKT/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">白（照明）</span><span class="ai-chip">ネイビー</span><span class="ai-chip">ブルーグラデーション</span><span class="ai-chip">窓光×球体照明</span><span class="ai-chip">照明を上部に・曲線で視線誘導</span><span class="ai-chip">モダン・クール</span><span class="ai-chip">建築（照明×階段）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>保存4=「素敵だね」で終わるタイプ。ホテル名・場所がキャプションにないと保存されない好例</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>美しい空間ほど「どこ？」に即答できる場所情報を必ず書く</li><li>人物のブレを入れて空間にスケール感と動きを出す</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>建築・ホテル好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DY6x_EMiQwm/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/708528508_17894722755465938_6149358998706070260_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=F5OE--3AopkQ7kNvwElmGbF&amp;_nc_oc=AdqlmoBpdpNkNDEmAE0haTMKBnBqT_Ostzqo1R8NFivHDIsnDvKVvOg_6TFmrdm-M6kF3ulX8bNyFuu5iO1BCg5B&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGsC34v4dmBflPQNPmb240Gs1PpRG-FTlTswnJtqbhYAj6xWY1n09DGIk7ztLTzXycl_LxeyKH8&amp;oh=00_AQA6nqhSUYhbgMQwEzV-oxtJ5bZPpIRa6FC-U-9fBdkNfA&amp;oe=6A5A2B52" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/05/29 19:00</span>
+      </div>
+      <div class="card-preview">こんなとこ無料で行けちゃうんやったら通ってしまうよな、一回にスタバがあるのもかなりありがたい🪑 📍大阪　門真　@ka…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,590</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">16</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">25</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value mid">1.01%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">56</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DY6x_EMiQwm/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ウッドベージュ</span><span class="ai-chip">グリーン（前ボケ）</span><span class="ai-chip">暖色照明</span><span class="ai-chip">夜の室内・暖色照明</span><span class="ai-chip">緑の前ボケ越し・奥行きのある斜め構図</span><span class="ai-chip">暖かいナチュラル</span><span class="ai-chip">施設の空間（図書館）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「無料で行ける」という実用情報が保存を生む。コスパ系スポットは保存率が高い</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>「無料」「並ばない」などのお得情報を冒頭に</li><li>前ボケで「覗き見」感を出し空間に誘い込む</li><li>施設×スタバなど組み合わせ情報も保存価値</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>お出かけスポットを探す層・学生・節約層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DaaKaj0CckY/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/735595180_17900136243465938_3684231944256387858_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=3OhUczqiBSIQ7kNvwEGywJB&amp;_nc_oc=Ado9p5ast8KfPlQ9t0LXIn3UBfdZbGeE91czowecgeZpKY-yyrq8UqXF-uNZsoVg9-uo7GYawEyrRDibwKwHYei5&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQEvd4R81ekDef9sGFsGq7sCiiIRQhBBWBWA0na_VW6dbJmmp_y13nvbBn7V0zjRjsJzGyT-ICyt&amp;oh=00_AQBtpX3tvupw-XFPA6scV8ngXxnDbOVf9SjMbmkl9uDi7Q&amp;oe=6A59F7CE" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/07/05 20:02</span>
+      </div>
+      <div class="card-preview">こんなに雨が似合うカフェある？ 落ち着いた素敵な空間、京都烏丸に来る際は是非に🍵 Is there any café …</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,836</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">4</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">45</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.22%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">54</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DaaKaj0CckY/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">抹茶グリーン</span><span class="ai-chip">赤×オレンジ（ドリンク）</span><span class="ai-chip">ウッド</span><span class="ai-chip">雨の日の柔らかい外光</span><span class="ai-chip">手前に主役・窓外の庭を背景に</span><span class="ai-chip">しっとり・低彩度</span><span class="ai-chip">ドリンク×菓子×窓外の庭</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「雨の日に行くカフェ」というシチュエーション提案が刺さる。雨=行き先に困る日の解決策</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>「雨が似合う」など天気×スポットの切り口</li><li>窓際席で庭を背景にした配膳写真</li><li>エリア名（京都烏丸）を明記</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>京都観光予定の人・雨の日のお出かけ先を探す人</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DVlReNXAVym/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/649215360_17882824047465938_4153086653091801819_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=NcsAdrdjMNwQ7kNvwG0RHf-&amp;_nc_oc=AdqCR8UneYMSRkdDavRCao4g3vnjJ7SYJDmmkAPtmd_Y9b48afeqSOrpf_wFm2E4xueM3LZTuJV_hWfyI9xQE3nu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHBgKohvaMXiv6kErjMNh5rCtLcfbXPZRpz67kMg6K1aaIS0Zd03kLd4uVkeYVWgoZBwNGr7tMF&amp;oh=00_AQBQChKjcv2yWjZz5ShKfun9iQo1_3s4MRs5Sho9Xgc4FA&amp;oe=6A5A0915" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/07 20:58</span>
+      </div>
+      <div class="card-preview">桜の匂いのハンドソープ、めちゃくちゃ可愛いしいい匂いすぎる🌸￼</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">3,453</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">2</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">5</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.06%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">53</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DVlReNXAVym/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">アイボリー</span><span class="ai-chip">黒（ポンプ）</span><span class="ai-chip">白背景への柔らかい光</span><span class="ai-chip">斜め置き・余白広め</span><span class="ai-chip">ミニマル・清潔感</span><span class="ai-chip">商品（BAUMハンドソープ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>views最多なのに保存2。「可愛い」で流れる商品単体投稿の典型。買える場所・値段があれば保存された</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>商品紹介は「どこで買える・いくら」を入れると保存に変わる</li><li>バズった=関心はあるので、続編で購入情報を補足する手も</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>コスメ・生活雑貨好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWyZ5ztiSWr/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/660427098_17887168248465938_3323052560452616375_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=zZco3Ak0e6AQ7kNvwFrSpsi&amp;_nc_oc=AdqmSDs6kpbmkXSPKfhYNRxz9g7m7LuNgaQ3y2dkqHivxq6H948iZD1fgh4zukqBZOpucFuGZnZfZDwMxrSkOvEU&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHBIa2Tt-T-Q7RnTISRSh1b6CzIOAOzMGVH63ZXuIIGwEj4ARA6qB0l7BrQ2c_4ZclfrSuEro5g&amp;oh=00_AQCUVRaXEaQs5wxndK2eNQXEv9HMts5IpysN0E_EXH9Q0w&amp;oe=6A5A11F7" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/04/06 19:53</span>
+      </div>
+      <div class="card-preview">📍大阪　天満橋 @hotelnoum  @noum_osaka</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,414</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">5</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">22</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.35%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">41</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWyZ5ztiSWr/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DWoH9UrCaAc/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657344508_17886629172465938_8936436122145899841_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=mrocb9ack6IQ7kNvwFhlLYm&amp;_nc_oc=AdqN7_pL6azIXBg-QxSADuNUpNQoCKQwl3ZF8nO7Nv6G0XY9G6KMK4PtfGxvE7dnwrMkGVKMtgRawd66b4YjVvtb&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGG9W12o7ySOyphKwq_gQcDihLeMVd9NCOKb5htmqCT_T-TqYKh4g4cf00EO_texv7_zVg8h_T8&amp;oh=00_AQAlHg0k5IcFEKHPaRbc-sLHR-31czoqmOyIk8WIovqv2w&amp;oe=6A59FA12" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          
+        </span>
+        <span class="timestamp">2026/04/02 20:04</span>
+      </div>
+      <div class="card-preview">@patinaosaka</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,523</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">2</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">15</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.13%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">39</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWoH9UrCaAc/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div></div>
+
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>見られたのに保存されなかった投稿</h2>
+<p class="section-note">閲覧数上位25% × 保存率下位25%。表紙は強いが保存価値が弱かった可能性</p>
+<div class="cards-grid">
+  <div class="card rank-warn">
+    <a href="https://www.instagram.com/p/DVlReNXAVym/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/649215360_17882824047465938_4153086653091801819_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=NcsAdrdjMNwQ7kNvwG0RHf-&amp;_nc_oc=AdqCR8UneYMSRkdDavRCao4g3vnjJ7SYJDmmkAPtmd_Y9b48afeqSOrpf_wFm2E4xueM3LZTuJV_hWfyI9xQE3nu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQHBgKohvaMXiv6kErjMNh5rCtLcfbXPZRpz67kMg6K1aaIS0Zd03kLd4uVkeYVWgoZBwNGr7tMF&amp;oh=00_AQBQChKjcv2yWjZz5ShKfun9iQo1_3s4MRs5Sho9Xgc4FA&amp;oe=6A5A0915" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/03/07 20:58</span>
+      </div>
+      <div class="card-preview">桜の匂いのハンドソープ、めちゃくちゃ可愛いしいい匂いすぎる🌸￼</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">3,453</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">2</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">5</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.06%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">53</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DVlReNXAVym/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">アイボリー</span><span class="ai-chip">黒（ポンプ）</span><span class="ai-chip">白背景への柔らかい光</span><span class="ai-chip">斜め置き・余白広め</span><span class="ai-chip">ミニマル・清潔感</span><span class="ai-chip">商品（BAUMハンドソープ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>views最多なのに保存2。「可愛い」で流れる商品単体投稿の典型。買える場所・値段があれば保存された</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>商品紹介は「どこで買える・いくら」を入れると保存に変わる</li><li>バズった=関心はあるので、続編で購入情報を補足する手も</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>コスメ・生活雑貨好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-warn">
+    <a href="https://www.instagram.com/p/DWoH9UrCaAc/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657344508_17886629172465938_8936436122145899841_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;cb=8438d1d6-89aba764&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=mrocb9ack6IQ7kNvwFhlLYm&amp;_nc_oc=AdqN7_pL6azIXBg-QxSADuNUpNQoCKQwl3ZF8nO7Nv6G0XY9G6KMK4PtfGxvE7dnwrMkGVKMtgRawd66b4YjVvtb&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=F9xgp6UDDhMEJzhS4ThnVg&amp;_nc_tpa=Q5bMBQGG9W12o7ySOyphKwq_gQcDihLeMVd9NCOKb5htmqCT_T-TqYKh4g4cf00EO_texv7_zVg8h_T8&amp;oh=00_AQAlHg0k5IcFEKHPaRbc-sLHR-31czoqmOyIk8WIovqv2w&amp;oe=6A59FA12" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          
+        </span>
+        <span class="timestamp">2026/04/02 20:04</span>
+      </div>
+      <div class="card-preview">@patinaosaka</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,523</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">2</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">15</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.13%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">39</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DWoH9UrCaAc/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div></div>
+
+<footer class="footer">
+  Instagram 分析 — @fuchan_tokimekimemo ／ 評価基準: ❶閲覧数 ❷保存 ❸コメント ❹いいね<br>
+  ※投稿写真はInstagramのCDN経由で表示しており、古いレポートでは画像が期限切れになることがあります（レポート再生成で復活）
+</footer>
+
+</div>
+<script>
+document.querySelectorAll(".sortable th[data-sort]").forEach(function(th){
+  th.addEventListener("click", function(){
+    var table = th.closest("table");
+    var tbody = table.querySelector("tbody");
+    var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+    var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+    var asc = th.dataset.asc === "1";
+    rows.sort(function(a, b){
+      var av = parseFloat(a.children[idx].dataset.v || a.children[idx].textContent.replace(/[,%]/g,"")) || 0;
+      var bv = parseFloat(b.children[idx].dataset.v || b.children[idx].textContent.replace(/[,%]/g,"")) || 0;
+      return asc ? av - bv : bv - av;
+    });
+    th.dataset.asc = asc ? "0" : "1";
+    rows.forEach(function(r){ tbody.appendChild(r); });
+  });
+});
+var searchInput = document.getElementById("post-search");
+var catFilter = document.getElementById("cat-filter");
+var searchCount = document.getElementById("search-count");
+function applyFilter(){
+  var q = searchInput.value.toLowerCase().trim();
+  var c = catFilter.value;
+  var filtering = !!(q || c);
+  var shown = 0;
+  document.querySelectorAll("#all-posts tbody tr").forEach(function(tr){
+    var show;
+    if (filtering) {
+      var matchQ = !q || (tr.dataset.full || "").indexOf(q) !== -1 || tr.textContent.toLowerCase().indexOf(q) !== -1;
+      var matchC = !c || tr.dataset.cat === c;
+      show = matchQ && matchC;
+    } else {
+      show = tr.dataset.def === "1";
+    }
+    tr.style.display = show ? "" : "none";
+    if (show) shown++;
+  });
+  searchCount.textContent = filtering ? shown + " 件ヒット" : "直近30日の閲覧数上位 " + shown + " 件を表示中";
+}
+searchInput.addEventListener("input", applyFilter);
+catFilter.addEventListener("change", applyFilter);
+applyFilter();
+</script>
+</body>
+</html>

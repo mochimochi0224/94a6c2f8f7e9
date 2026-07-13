@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Instagram 分析 — @fu___iphone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#F7F6F3; --card:#FFFFFF; --border:#EAE6DE; --text:#2B2B2B; --muted:#8D8880;
+    --accent:#D8C5A6; --accent-soft:#F4EEE2; --accent-deep:#9A855C;
+    --sage:#8FA58B; --warn:#C9A227; --low:#B25B4C;
+    --radius:18px; --shadow:0 6px 24px rgba(0,0,0,.04);
+  }
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans JP",-apple-system,sans-serif;line-height:1.7;padding:48px 20px}
+  .container{max-width:1060px;margin:0 auto}
+  .muted{color:var(--muted);font-size:.85rem}
+
+  .top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;flex-wrap:wrap;gap:12px}
+  .top h1{font-size:30px;font-weight:700;display:flex;align-items:center;gap:12px}
+  .top h1 .ig-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:var(--accent-soft);color:var(--accent-deep)}
+  .top .gen{text-align:right;color:var(--muted);font-size:.82rem;line-height:1.6}
+
+  .section-title{font-size:21px;font-weight:600;margin:56px 0 6px;display:flex;align-items:center;gap:10px}
+  .section-title .ico{color:var(--accent-deep);display:inline-flex}
+  .section-note{color:var(--muted);font-size:.83rem;margin-bottom:18px}
+  .sub-title{font-size:15px;font-weight:600;margin:26px 0 10px;color:#4A463F}
+
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .summary-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 18px;text-align:center}
+  .s-label{font-size:.75rem;color:var(--muted);margin-bottom:8px}
+  .s-value{font-size:30px;font-weight:700;letter-spacing:-.01em}
+
+  .recs{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 28px 28px 48px}
+  .recs li{margin:10px 0}
+
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .stats-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;font-size:.88rem}
+  .stats-table th{background:#FBFAF7;text-align:left;padding:12px 14px;font-size:.75rem;color:var(--muted);white-space:nowrap;font-weight:600}
+  .stats-table td{padding:10px 14px;border-top:1px solid var(--border)}
+  .stats-table tbody tr:hover td{background:#FAF8F5}
+  .stats-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .stats-table .example a{color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+  .stats-table .example a:hover span{text-decoration:underline}
+  .thumb{width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0;background:var(--accent-soft)}
+  .sortable th[data-sort]{cursor:pointer;user-select:none}
+  .bar-cell{width:150px}
+  .bar{height:8px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));border-radius:4px;min-width:2px;opacity:.7}
+  .lift{font-weight:600;padding:2px 9px;border-radius:99px;font-size:.78rem}
+  .lift-pos{background:#EDF2EC;color:var(--sage)}
+  .lift-neg{background:#F7EAE6;color:var(--low)}
+  .lift-flat{background:#F2F0EB;color:var(--muted)}
+
+  .search-bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+  .search-bar input{flex:1;min-width:230px;height:48px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 18px;color:var(--text);font-size:16px;font-family:inherit;box-shadow:var(--shadow)}
+  .search-bar input:focus{outline:none;border-color:var(--accent-deep)}
+  .search-bar select{height:48px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 14px;color:var(--text);font-size:15px;font-family:inherit;box-shadow:var(--shadow)}
+
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card.rank-top{border:1px solid var(--accent)}
+  .card.rank-warn{border:1px solid var(--warn)}
+  .card-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--accent-soft)}
+  .card-body{padding:20px 22px 22px}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:.72rem;background:var(--accent-soft);color:var(--accent-deep);padding:3px 10px;border-radius:99px;font-weight:500}
+  .chip-tag{background:#F2F0EB;color:var(--muted)}
+  .timestamp{font-size:.74rem;color:var(--muted)}
+  .card-preview{font-size:.86rem;color:#57534C;margin-bottom:14px;line-height:1.65;min-height:40px}
+  .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .metric{text-align:center;padding:10px 4px;border-radius:12px;background:#FBFAF7}
+  .metric.accent{background:var(--accent-soft)}
+  .m-label{font-size:.68rem;color:var(--muted)}
+  .m-value{font-size:1rem;font-weight:600}
+  .rates-row{display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--border);padding-top:12px}
+  .rate{display:flex;align-items:baseline;gap:8px}
+  .r-label{font-size:.72rem;color:var(--muted)}
+  .r-value{font-size:1.05rem;font-weight:700}
+  .r-value.good{color:var(--sage)}
+  .r-value.mid{color:var(--warn)}
+  .r-value.low{color:var(--low)}
+  .permalink{margin-left:auto;font-size:.8rem;color:var(--accent-deep);text-decoration:none}
+  .permalink:hover{text-decoration:underline}
+
+  .ai-block{background:#F4F7F2;border:1px solid #E3EADF;border-radius:14px;padding:14px 16px;margin-top:14px;font-size:.8rem;line-height:1.65}
+  .ai-title{display:flex;align-items:center;gap:6px;font-weight:600;color:#5F7259;margin-bottom:8px;font-size:.76rem}
+  .ai-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .ai-chip{background:#fff;border:1px solid #E3EADF;color:#5F7259;padding:2px 9px;border-radius:99px;font-size:.7rem}
+  .ai-row{margin:7px 0;color:#4A463F}
+  .ai-k{display:inline-block;font-weight:600;color:#5F7259;margin-right:8px;font-size:.72rem}
+  .ai-list{margin:4px 0 0 18px}
+  .ai-list li{margin:3px 0}
+
+  .footer{text-align:center;color:var(--muted);font-size:.78rem;padding:40px 0 10px;margin-top:60px;border-top:1px solid var(--border)}
+
+  @media(max-width:640px){
+    body{padding:20px 10px}
+    .top h1{font-size:22px}
+    .cards-grid{grid-template-columns:repeat(2,1fr)}
+    .card-body{padding:12px 12px 14px}
+    .metrics-row{grid-template-columns:repeat(2,1fr)}
+    .summary-grid{grid-template-columns:repeat(2,1fr)}
+    .s-value{font-size:22px}
+    .stats-table{font-size:.76rem}
+    .stats-table th,.stats-table td{padding:8px 9px}
+    .hide-sm{display:none}
+    .thumb{width:30px;height:30px}
+    .search-bar input{font-size:16px}
+    .section-title{font-size:17px;margin-top:38px}
+    .bar-cell{width:60px}
+    .card-preview{min-height:0}
+    .rates-row{flex-wrap:wrap;gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="top">
+  <h1><span class="ig-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>Instagram 分析</h1>
+  <div class="gen">@fu___iphone<br>生成日時：2026/07/13 10:33<br>フォロワー：369 人</div>
+</header>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></span>投稿検索</h2>
+<p class="section-note">デフォルトは直近30日の閲覧数上位20件。検索・種別選択で全 20 件が対象</p>
+<div class="search-bar">
+    <input type="text" id="post-search" placeholder="キーワード検索（キャプション全文が対象）">
+    <select id="cat-filter"><option value="">全種別</option><option value="カルーセル">カルーセル</option><option value="リール">リール</option><option value="画像">画像</option></select>
+    <span class="muted" id="search-count"></span>
+  </div>
+  <div class="table-wrap"><table class="stats-table sortable" id="all-posts">
+    <thead><tr>
+      <th data-sort="num">日付 ▾</th><th>投稿</th><th class="hide-sm">種別</th><th data-sort="num">閲覧数</th>
+      <th data-sort="num">保存</th><th data-sort="num" class="hide-sm">コメント</th><th data-sort="num">いいね</th><th data-sort="num" class="hide-sm">スコア</th>
+    </tr></thead>
+    <tbody><tr style="display:none" data-cat="画像" data-full="光と影があればどこでも綺麗なフォトスポット🌸
+
+#shotoniphone" data-def="0">
+    <td data-v="1776345528000">2026/04/16</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXMaZ_NCVL_/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670142406_17865155004671721_388240167004244335_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=2tqWvJtoSpgQ7kNvwEerd8z&amp;_nc_oc=AdpTj-0ddEnr0I0E9Maauskjqu9gcFvD2-3zvu09cooW73pRqvR9WTOv7XvnHAyH0QT5ZsEiTqT1DhXGfjIC2JGY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGPjzMh2sxEvWffShDuL5RTP5U7yEHeWvxo0J4s2lhUe-d27rkkJtIVGZeeXBK9PxiCYPtQNi4K&amp;oh=00_AQCF9K5QRATq4QjqNdJRPwLV-ybhloj_oQ7w1i_DQtXvNQ&amp;oe=6A5A024B" loading="lazy" alt=""><span>光と影があればどこでも綺麗なフォトスポット🌸 #shoto…</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="2138"><strong>2,138</strong></td>
+    <td class="num" data-v="14">14</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="16">16</td>
+    <td class="num hide-sm" data-v="77.43589743589745">77</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="iphoneで物撮りするの、意外と難しくない？
+ということで撮り方のポイント今日投稿してます携帯
+
+#shotoniphone" data-def="0">
+    <td data-v="1779447604000">2026/05/22</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYo3PgYCT7F/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/704636936_17872541883671721_3304065939215378511_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=B8xxcrXovJ4Q7kNvwFqtwbB&amp;_nc_oc=AdqCh1q9qG_QXyriBHsjYOgzp7UhYkp8-8X64g9Ba4sqyEpEAqNYG6xLXX5q7vLoQ1F13X3Ep3zwuCTryyI-omHj&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQEM4-5sCxQ7xg39mwdwTXXB6oDP92Hz0LBDGm2veb0xGA-JIczxFAY73alP_6gywBadCKjD_lLm&amp;oh=00_AQBJQvQ_EugArZNdLHBE6fRX3N0zpDKCh_-rHf5gKdQXWg&amp;oe=6A5A1869" loading="lazy" alt=""><span>iPhoneで物撮りするの、意外と難しくない？ ということで…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="2014"><strong>2,014</strong></td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="18">18</td>
+    <td class="num hide-sm" data-v="60.04881149408745">60</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="hydrangeas, shot on iphone" data-def="0">
+    <td data-v="1780995901000">2026/06/09</td>
+    <td class="example"><a href="https://www.instagram.com/p/DZXAVYGGoO1/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/719754931_17876079405671721_6056902696917495830_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=106&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kIkXNvBZ0CoQ7kNvwE-M364&amp;_nc_oc=Ado4Nv3SZ3J9qLBjoVSufW4EsD3z8Zl04AYoPyTPZLx-gxHtPPE6rd5z93K5Wt5eloNMQ2NqqJfUvkb2XQ3xFev8&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQE5ka0BnB0xmPKx7BDnotZRW1A2sHRlyZDF8myGfiGGp6THgcF1tUZm3ArYvzxOFDOBh1HmsXJK&amp;oh=00_AQBQ0XIVPHvWcbIzMfBFRJLL1SGftgkrNafddeTzaliZew&amp;oe=6A5A2EAA" loading="lazy" alt=""><span>Hydrangeas, shot on iPhone</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1809"><strong>1,809</strong></td>
+    <td class="num" data-v="11">11</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="31">31</td>
+    <td class="num hide-sm" data-v="68.58794464033005">69</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="カフェ写真も気軽に撮るならiphoneだな！
+
+#shotoniphone" data-def="0">
+    <td data-v="1776164029000">2026/04/14</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXHAOjzCRn3/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670704098_17864757495671721_7429033275917960084_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Zvzo8_Pmge0Q7kNvwFDNDEH&amp;_nc_oc=AdppsE8bOu9AYQHMqEvDdm5kHqIoT6sRnnM9J7lvnCTE_Wzvloog8OCz4_DtkFApAoFOjTf0t0kY0jd356sOfb8y&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF2j3-7Gn5WIXP2Btu3zaKHvhvqLl0MelaYwnRRplGBr-BIdQvv6yH2MfWg6hgcxIL5Hcp_CFzT&amp;oh=00_AQBXWNHkf7UceO2ngEorXkQGLzSxrBrJncw_R8hOcoKLmA&amp;oe=6A5A21C9" loading="lazy" alt=""><span>カフェ写真も気軽に撮るならiPhoneだな！ #shoton…</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1745"><strong>1,745</strong></td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="15">15</td>
+    <td class="num hide-sm" data-v="69.65532129236526">70</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="光と影を探すフォトウォーク、いつも持ち歩いてるiphoneで撮影しても楽しいよ📱
+
+-————————————
+
+shot on iphone17pro
+#灯影プリセット 
+
+撮影や編集、プリセットについてはnoteにまとめているので気になる方はプロフィールリンクからご覧ください！" data-def="0">
+    <td data-v="1778320800000">2026/05/09</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYHSCvoiYYV/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/695691306_17869800303671721_8461709356520367874_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=104&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ItYGrKuVxp4Q7kNvwFFveLG&amp;_nc_oc=AdpveZyyo_As-W1KNsmoHpNVGBkd1kyr9VDI1JyTBz3bo1_nRcU4lO0_Se5VMuQgzJ7UjwU_y2KmXdETNvy3aA04&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHU4SmNo9tnmaM-lDdcXkfAd-ST69YpHKgBOCxYGz8KLER4X8hPnGQPjTwoCOZhb-CPKOEgPqY4&amp;oh=00_AQCF84ObjbgfIkN-7Q6vsOyep3ClMFmUhPgC4qihE-2EeA&amp;oe=6A5A2BBD" loading="lazy" alt=""><span>光と影を探すフォトウォーク、いつも持ち歩いてるiPhoneで…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1691"><strong>1,691</strong></td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="17">17</td>
+    <td class="num hide-sm" data-v="53.90527931687894">54</td>
+  </tr>
+<tr style="display:none" data-cat="カルーセル" data-full="全部iphoneで撮ったカフェ写真！
+撮影方法はthreadsにて解説してます🍽️
+
+-————————————
+
+shot on iphone17pro
+#灯影プリセット 
+
+撮影や編集、プリセットについてはnoteにまとめているので気になる方はプロフィールリンクからご覧ください！" data-def="0">
+    <td data-v="1778234400000">2026/05/08</td>
+    <td class="example"><a href="https://www.instagram.com/p/DYEtTHdCe8p/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/686942766_17869799151671721_8140463190617435964_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ReK7rBylNEYQ7kNvwH2k55q&amp;_nc_oc=AdoyV97Joa2NTNUJ1tnA6zhynIdLBe2GxiP9MlpIR9AYBhQ7QRwO7qQuuSsHL3gxRet8s2bGPTGyR351ITpYkrpZ&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF1tU4-BtlVEYuOuUSWOnvaHCg9ocjv_WZBARs3XjB9UtmUGDWtOqmduVqy-ZO-E1OfY9OY-41f&amp;oh=00_AQBREpkaNVIwQghK8tmnszZW38CG0Wop475-pF47Ohvmdw&amp;oe=6A5A2CCE" loading="lazy" alt=""><span>全部iPhoneで撮ったカフェ写真！ 撮影方法はThread…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1672"><strong>1,672</strong></td>
+    <td class="num" data-v="14">14</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="19">19</td>
+    <td class="num hide-sm" data-v="67.30709265788781">67</td>
+  </tr>
+<tr data-cat="リール" data-full="" data-def="1">
+    <td data-v="1783069212000">2026/07/03</td>
+    <td class="example"><a href="https://www.instagram.com/reel/DaUy8wWzZ1a/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/729685861_17880808155671721_6271817077620521465_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=104&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&amp;_nc_ohc=IbdAST1Im9gQ7kNvwE5i0Wu&amp;_nc_oc=AdrAp0USVYX3OQN6b53Sag3Unnhq0z_bg48sd0Fyq9rzZpFRZHQvhQsqva4s6hoGSe3P1iqiCdbx2GBd-o7sWOMl&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGxFCyrvcmwXM2wT6ycP8GjTG7GsBR-wDa9OjRgG38HLbHbSzej6uHyR-Q_pBkq7FFkG38B307a&amp;oh=00_AQByxqk3R09EI4DgJANqjO-QgXg6dK14Ac_wy4-PnCGlaw&amp;oe=6A5A2534" loading="lazy" alt=""><span>（キャプションなし）</span></a></td>
+    <td class="hide-sm">リール</td>
+    <td class="num" data-v="1575"><strong>1,575</strong></td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="39">39</td>
+    <td class="num hide-sm" data-v="66.83348924228251">67</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="春は綺麗なお花がたくさんあって嬉しいな
+
+shot on iphone17pro" data-def="0">
+    <td data-v="1775966164000">2026/04/12</td>
+    <td class="example"><a href="https://www.instagram.com/p/DXBG0zqCdXN/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670470698_17864332695671721_8453986908896928166_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kFNFXw914BUQ7kNvwFq3Njk&amp;_nc_oc=Ador1694yWsevE3Maa38iteRcZSdudFesX75HxSklB9AP5llCQOd6GkTpuH-VXkcgoJmpwV1R21hbU9_RDyCMr5Z&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHjSCa7VSrheAjToU-KAvWl3lVjfIowFhTWVj1p-fAgN5ZLH1noD7bB35utv-WNk7HPSXOwP9Da&amp;oh=00_AQBe8lUYGiFqdjWhAe9u018EE0zHsJAUjAc3j4siEJG1yg&amp;oe=6A59FF45" loading="lazy" alt=""><span>春は綺麗なお花がたくさんあって嬉しいな shot on iP…</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1492"><strong>1,492</strong></td>
+    <td class="num" data-v="8">8</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="20">20</td>
+    <td class="num hide-sm" data-v="53.35396128660862">53</td>
+  </tr>
+<tr data-cat="カルーセル" data-full="綺麗な青空に出会うタイミングにカメラがなければiphoneで撮ればいいじゃんね☁️
+
+shot on iphone13" data-def="1">
+    <td data-v="1782295205000">2026/06/24</td>
+    <td class="example"><a href="https://www.instagram.com/p/DZ9uj2xif_V/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/728704398_17878816707671721_8926392175354376505_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=109&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=SAjo5Zss37QQ7kNvwFqysNC&amp;_nc_oc=Adp5G3URKMmCOdTS8D_BZlWOPpnXyodj7zfSoAD2mGyys5cUvqtuoGLTqh_SGLfoVqzbt5UFsM_0QIHA9-bC7ThW&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHXrgS47LdscQvR-g1RCoxspIOo0Jsg1c4NM1-Hn0Gbebcyxrvd_g1p5HY2IJlwWYglqQ3Drmpp&amp;oh=00_AQBN433UFQJIsJjAQYJd2ZkKVMOIgPLJRcbZPV6qRbwVUQ&amp;oe=6A5A1A58" loading="lazy" alt=""><span>綺麗な青空に出会うタイミングにカメラがなければiPhoneで…</span></a></td>
+    <td class="hide-sm">カルーセル</td>
+    <td class="num" data-v="1363"><strong>1,363</strong></td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="32">32</td>
+    <td class="num hide-sm" data-v="48.41404619702094">48</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775055144000">2026/04/01</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWl9MMsCd9I/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657397021_17862118659671721_9037931661627974536_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Y3Ohf5RC6rkQ7kNvwGCREWg&amp;_nc_oc=AdqAhTjr6oZMZnWnc0rhIKQpGea9Wbqa8WKmBM6Ip0tAy5wmNV2QIenxfaRnTi6LrTZU_M33WaYGc-Vq6HKmDy5x&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHCnJskXDe3VBrxfsEF4CJeSyQTHEYB0MHr1FIULI7pNW4XKIT-PM6FypvsEnPJar4ML6kT7TwF&amp;oh=00_AQAnOijNmKv_pXJp_keX8ttwoDbB46Yf9wm6MshbbBcO9g&amp;oe=6A5A1BA4" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1300"><strong>1,300</strong></td>
+    <td class="num" data-v="3">3</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="14">14</td>
+    <td class="num hide-sm" data-v="38.99198867861169">39</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775361008000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvEmQrCTZI/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657875129_17862859611671721_6719548322813194675_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=cAD_NNz41wEQ7kNvwG8kypz&amp;_nc_oc=Adq72mqiZJrkP-UnnkP4x_D2reARUowJt0czU9AlraV0cOBwKH3-pse2mMZ4ZWSrnx9MJIl1S6hG8mmqt3R0Syz3&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF9VVDfxVbGhaRadLJAHKSjMnA8rbrIotOzTeOt9OzcV2HyTXNH6m1Vvx3p8ePrN2iRpEY5JCEx&amp;oh=00_AQC5XyRiSIrUfyOdQFWqyrRnTa_tven7PJwo8tZJ9zqu_w&amp;oe=6A59F717" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1120"><strong>1,120</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="29.397831666306878">29</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775828122000">2026/04/10</td>
+    <td class="example"><a href="https://www.instagram.com/p/DW8_jsaiSR1/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/669980444_17864017659671721_1559653913309371309_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Mn1en_PHRxYQ7kNvwEv5EeW&amp;_nc_oc=AdoZWMX7wkBy-IVCgBsJNZyAwbqvysfX4Ec_fesZYBauTPJhhNLX8BPncDjbMh1h9cXTlEiZBwlZfd9FbQcA00am&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHcGrpy4M0699kJAqvWHlpyDhWO49X0IAsDHI3ATN2mMKDec4dR7MjH-BRUtU8Xi7UZqSlYRXO2&amp;oh=00_AQA6ZtoASBV9qgIjitZoMqOa6NICBIUoB8IZT97iJmg9KQ&amp;oe=6A5A2836" loading="lazy" alt=""><span>shot on iPhone17Pro</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1104"><strong>1,104</strong></td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="14">14</td>
+    <td class="num hide-sm" data-v="39.40826557290542">39</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775361065000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvEs4giUzl/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/658669789_17862859674671721_943481741477147988_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=O4pcfLrFowwQ7kNvwEjwQ47&amp;_nc_oc=AdptQyb-XEfhY5vtL-SnurUpIpKlnGoEpyfA69Qd0_MXfA6uahWyVZQePPbxJJzEOWTkfKUWCnWlN7K7Ex1vrvdL&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQFw2BbpRZ_jEwJnK12NLhktowOCnaR9LDyIW4ozDAZOVqOgzFu2gNwjCeiY_IeW_q9g-OcZcBzK&amp;oh=00_AQDhSpCCsTUtJccZpCVOMVI45fxlN3sX1vqE6ZN4ZVdhsw&amp;oe=6A5A2A0F" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="1048"><strong>1,048</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="27.201194502410598">27</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775828092000">2026/04/10</td>
+    <td class="example"><a href="https://www.instagram.com/p/DW8_fBHCSvP/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/662287260_17864017506671721_4128347499877178061_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=H7566xoiJWwQ7kNvwHLhG7T&amp;_nc_oc=AdrdRBx9Fh1LGYbCTSOPCiFSxqmxxMzVVHP_VTPSkqLNin_5T2ZdGm_uta3Q7fB-lCTfoD17LZtFStXqCO6YheFu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGNh37FeXSZX77s86eoAmVHezD_D8Fo1NiFRJUQuN02Bgi-gyr8rASPBhMX8-YzsbJA9lX9I3Mn&amp;oh=00_AQAQv5myjpAbs8ApDQwtqXDpdJo8Xbq3kh3HNy_gfsCb4Q&amp;oe=6A5A1E8C" loading="lazy" alt=""><span>shot on iPhone17Pro</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="967"><strong>967</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="10">10</td>
+    <td class="num hide-sm" data-v="25.178695641745218">25</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775361112000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvE0HRifF8/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/658531990_17862859827671721_3867035051320589253_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=105&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=bpg6QnVc5foQ7kNvwEZWc7P&amp;_nc_oc=AdqecDChfEr4b7Dw0Q3Ap3HND0Of71udPbqpqetEbAM3_BX52uG7CH9HE90A5F5kWc943STnFFgC_bvFWM3dNzjV&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHZNoDtwuD1Hxg_3UE1I-SBkujWRmRJcliElTjojmDWhMpAL8ukX2BOuKgdt8V781YJpZErJJV8&amp;oh=00_AQCZYOuc-6w4Ms-rZcNzAc6VcmiaPODaxmFEg5F7b6wmxg&amp;oe=6A5A25B2" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="869"><strong>869</strong></td>
+    <td class="num" data-v="4">4</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="11">11</td>
+    <td class="num hide-sm" data-v="29.80991101196901">30</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775365397000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvM-l6iT00/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/662405433_17862871266671721_6215911806545017154_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=HSM9NBexXf8Q7kNvwGJS6EF&amp;_nc_oc=AdpaM3qEWsuha2A7jiTe1rjIBuuUtVzHnfHuozDHkUu3s4U-2KuXih80O8TfKNUtp47wyAlvciAYKip9rFU_RKLJ&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQEjQzNmvEsKHMbwGS4-tZMliEpMfxZ2F5LOYfGUgSB1Ie3pJ-JQdqIW6f--E_9XcjLi1rB_tp5x&amp;oh=00_AQBB04Armxe4eOUk94Rj3SpNf9lQl_tRQ1Xni_4wApmVQw&amp;oe=6A5A1FD8" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="859"><strong>859</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="23.55040656256746">24</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="iphoneで良い、じゃなくてiphoneが良いと思う場面もたくさんありますね" data-def="0">
+    <td data-v="1774766533000">2026/03/29</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWdWtioCWIp/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/657268757_17861321547671721_8999090501526004044_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=7lGhCkzNf70Q7kNvwHM0sNs&amp;_nc_oc=AdpVLwzzB3kN1atn4-r-b3pJjmq8W8S4L4mrQKcLf3hl2q-D1hBzZvLjdB2-Wz1yIRdyUk4d_OYon49RZguZywzY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQG5H1ap5qq_-xP7vSg6m-00d3UvfFPqJ9CMwk5ZTzY9cLs9FzC84W_W49rAD4ks-IV2qx8XFJgj&amp;oh=00_AQCosMxD0b1VJC9fAnwev1pFnBKCahf8MzlFJMOL94DpUQ&amp;oe=6A5A197F" loading="lazy" alt=""><span>iPhoneで良い、じゃなくてiPhoneが良いと思う場面も…</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="828"><strong>828</strong></td>
+    <td class="num" data-v="5">5</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="11">11</td>
+    <td class="num hide-sm" data-v="30.51773764121753">31</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775361143000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvE4VKCSKl/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/662249796_17862859944671721_5103575420645232214_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=BwBL59ts3xQQ7kNvwF4fsMd&amp;_nc_oc=Adrsd5MAsbRMn6c8gfVudzd2peYib3K6Skfpnk7etXr3uOhXYSY0t3DrJf4LBjPVXc7mK3Xq4RExOj-R0VRPWru6&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQFQDsFKIxVwWrQCAF-5n_ZqQvpulPVpubW3dDIn42AF20qdS18rhZRXF2HVZl4bujQVjaVk6u7E&amp;oh=00_AQDx6kl72AG1WRyXoQS9fFd8z4xKeLyM6Vh3JQf2w_VkRQ&amp;oe=6A5A2567" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="815"><strong>815</strong></td>
+    <td class="num" data-v="0">0</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="7">7</td>
+    <td class="num hide-sm" data-v="20.854740831354487">21</td>
+  </tr>
+<tr style="display:none" data-cat="画像" data-full="shot on iphone17pro" data-def="0">
+    <td data-v="1775361195000">2026/04/05</td>
+    <td class="example"><a href="https://www.instagram.com/p/DWvE-j3iS_V/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/658145027_17862860049671721_4330511465529391629_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=FicGiu4mz78Q7kNvwH6PLOo&amp;_nc_oc=AdqqRIf1OVAp82PRK8H6aT74ogCrCL1ODrQdzngnLSG_ZMrqgt6DXWiYFAdriGqB3D3mEjLMy2ina9IDDjrfUfQs&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQETIzGg_s6JPsmMAGmr6WEXrlIFrVHklIcwInsbLnclDe9_Dw1vlYOgDw2B4Co6zwQ7OqZuFoUQ&amp;oh=00_AQC2nQwk0AMHqiOsSsiRIIhyPKmlBagNbZr37CiPnJ2diQ&amp;oe=6A5A0781" loading="lazy" alt=""><span>shot on iPhone17PRO</span></a></td>
+    <td class="hide-sm">画像</td>
+    <td class="num" data-v="803"><strong>803</strong></td>
+    <td class="num" data-v="1">1</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="6">6</td>
+    <td class="num hide-sm" data-v="21.984361133098272">22</td>
+  </tr>
+<tr data-cat="リール" data-full="shot on iphone17pro" data-def="1">
+    <td data-v="1783510319000">2026/07/08</td>
+    <td class="example"><a href="https://www.instagram.com/reel/Dah8IkJpiHL/" target="_blank" rel="noopener"><img class="thumb" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/741082438_17882088648671721_5225292316255147558_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=101&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&amp;_nc_ohc=Zq0IoaX28iMQ7kNvwGYpfhZ&amp;_nc_oc=AdrQHq6LbXgzwEjcDiDqNiFiXUxzvfgzv8Ze0W7QerTv7Ep1mWzQCFZi6a5lsC3LdZu5zzoMOqBfIv3Kl9GUyUqu&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGr_NLbzI_GsVgrOH3Seg2YQm8ZL1m1GJLGbkzIdg3gSshaSZ9CbR0BSjedOL21vdoFgjt8jCjn&amp;oh=00_AQDhyJ5l6hSmpb1stOK0eETBtreCiL_Cgrt33Xl78qmQ6Q&amp;oe=6A5A13EE" loading="lazy" alt=""><span>shot on iphone17PRO</span></a></td>
+    <td class="hide-sm">リール</td>
+    <td class="num" data-v="368"><strong>368</strong></td>
+    <td class="num" data-v="3">3</td>
+    <td class="num hide-sm" data-v="0">0</td>
+    <td class="num" data-v="12">12</td>
+    <td class="num hide-sm" data-v="16.683097071310353">17</td>
+  </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>アカウントサマリー</h2>
+<div class="summary-grid"><div class="summary-card"><div class="s-label">投稿数</div><div class="s-value">20</div></div><div class="summary-card"><div class="s-label">フォロワー</div><div class="s-value">369</div></div><div class="summary-card"><div class="s-label">平均閲覧数</div><div class="s-value">1,279</div></div><div class="summary-card"><div class="s-label">中央値閲覧数</div><div class="s-value">1,210</div></div><div class="summary-card"><div class="s-label">平均保存</div><div class="s-value">5.8</div></div><div class="summary-card"><div class="s-label">平均保存率</div><div class="s-value">0.42%</div></div><div class="summary-card"><div class="s-label">平均コメント</div><div class="s-value">0.0</div></div><div class="summary-card"><div class="s-label">平均いいね</div><div class="s-value">15</div></div></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>改善優先順位</h2>
+<p class="section-note">データから機械的に導いた提案です</p>
+<ol class="recs"><li>「カルーセル」の成績が最も良い。→ カルーセル中心の投稿計画に</li><li>平均保存率が 0.42% と低め。→「後で見返したくなる」まとめ・スポット情報・設定値などの保存価値を</li><li>「#shotoniphone」を含む投稿は閲覧数が全体平均の 1.5 倍。→ 相性の良いテーマとして強化</li><li>投稿時間帯は「夜（17-23時）」が最も反応が良い。→ この時間帯に寄せる</li><li>投稿頻度が月 4.0 本。→ 週2〜3本（月8〜12本）が安定圏</li></ol>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>月別トレンド</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>月</th><th>投稿数</th><th>平均閲覧数</th><th></th><th>平均保存率</th><th>フォロワー</th><th>増減（増加率）</th></tr></thead>
+    <tbody><tr>
+    <td>2026-03</td>
+    <td class="num">1</td>
+    <td class="num"><strong>828</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:46%"></div></td>
+    <td class="num">0.60%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-04</td>
+    <td class="num">12</td>
+    <td class="num"><strong>1,188</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:66%"></div></td>
+    <td class="num">0.31%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-05</td>
+    <td class="num">3</td>
+    <td class="num"><strong>1,792</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:100%"></div></td>
+    <td class="num">0.48%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-06</td>
+    <td class="num">2</td>
+    <td class="num"><strong>1,586</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:88%"></div></td>
+    <td class="num">0.49%</td>
+    <td class="num muted">—</td><td class="num muted">—</td>
+  </tr>
+<tr>
+    <td>2026-07</td>
+    <td class="num">2</td>
+    <td class="num"><strong>972</strong></td>
+    <td class="bar-cell"><div class="bar" style="width:54%"></div></td>
+    <td class="num">0.79%</td>
+    <td class="num"><strong>369</strong></td><td class="num muted">—</td>
+  </tr></tbody>
+  </table></div>
+  <p class="section-note" style="margin-top:10px">※ フォロワー数の記録は 2026-07-12 開始。翌月以降「+◯人（+◯%）→ 合計」が積み上がります</p>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>投稿種別 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>カルーセル</td>
+      <td class="num">5</td>
+      <td class="num"><strong>1,710</strong></td>
+      <td class="num">8.2</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+37%</span></td>
+    </tr>
+<tr>
+      <td>画像</td>
+      <td class="num">13</td>
+      <td class="num"><strong>1,161</strong></td>
+      <td class="num">4.5</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-14%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>ハッシュタグ分析</h2>
+<p class="section-note">3回以上使ったタグを平均閲覧数順に表示</p>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>ハッシュタグ</th><th>使用回数</th><th>平均閲覧数</th><th>平均保存</th><th>閲覧数全体比</th></tr></thead>
+    <tbody><tr>
+      <td>#shotoniphone</td>
+      <td class="num">3</td>
+      <td class="num"><strong>1,966</strong></td>
+      <td class="num">11.3</td>
+      <td class="num"><span class="lift lift-pos">+54%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>ライティング分析</h2>
+<p class="section-note">キャプションの構造と成績の関係</p>
+
+  <h3 class="sub-title">キャプションの長さ × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>短文（100字未満）</td>
+      <td class="num">18</td>
+      <td class="num"><strong>1,234</strong></td>
+      <td class="num">5.3</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-flat">-4%</span></td>
+    </tr></tbody>
+  </table></div>
+  <h3 class="sub-title">ハッシュタグの数 × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>1〜5個</td>
+      <td class="num">5</td>
+      <td class="num"><strong>1,852</strong></td>
+      <td class="num">10.8</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+51%</span></td>
+    </tr>
+<tr>
+      <td>タグなし</td>
+      <td class="num">15</td>
+      <td class="num"><strong>1,088</strong></td>
+      <td class="num">4.1</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-17%</span></td>
+    </tr></tbody>
+  </table></div>
+  <h3 class="sub-title">締めの呼びかけ（CTA） × 成績</h3>
+  <div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>CTAなし</td>
+      <td class="num">18</td>
+      <td class="num"><strong>1,234</strong></td>
+      <td class="num">5.3</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-flat">-4%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>投稿時間帯 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>夜（17-23時）</td>
+      <td class="num">11</td>
+      <td class="num"><strong>1,495</strong></td>
+      <td class="num">8.3</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+24%</span></td>
+    </tr>
+<tr>
+      <td>昼（11-17時）</td>
+      <td class="num">8</td>
+      <td class="num"><strong>979</strong></td>
+      <td class="num">2.6</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-32%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>曜日 × 成績</h2>
+<div class="table-wrap"><table class="stats-table">
+    <thead><tr><th>タイプ</th><th>件数</th><th>平均閲覧数</th><th>平均保存</th><th>平均コメント</th><th>スコア全体比</th></tr></thead>
+    <tbody><tr>
+      <td>金曜日</td>
+      <td class="num">5</td>
+      <td class="num"><strong>1,466</strong></td>
+      <td class="num">7.4</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-pos">+19%</span></td>
+    </tr>
+<tr>
+      <td>水曜日</td>
+      <td class="num">3</td>
+      <td class="num"><strong>1,010</strong></td>
+      <td class="num">3.7</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-20%</span></td>
+    </tr>
+<tr>
+      <td>日曜日</td>
+      <td class="num">8</td>
+      <td class="num"><strong>979</strong></td>
+      <td class="num">2.6</td>
+      <td class="num">0.0</td>
+      <td class="num"><span class="lift lift-neg">-32%</span></td>
+    </tr></tbody>
+  </table></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>保存されやすい投稿</h2>
+<p class="section-note">閲覧数が中央値以上の投稿を保存率順に。「後で見返したい」価値が高い投稿</p>
+<div class="cards-grid">
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXHAOjzCRn3/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670704098_17864757495671721_7429033275917960084_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Zvzo8_Pmge0Q7kNvwFDNDEH&amp;_nc_oc=AdppsE8bOu9AYQHMqEvDdm5kHqIoT6sRnnM9J7lvnCTE_Wzvloog8OCz4_DtkFApAoFOjTf0t0kY0jd356sOfb8y&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF2j3-7Gn5WIXP2Btu3zaKHvhvqLl0MelaYwnRRplGBr-BIdQvv6yH2MfWg6hgcxIL5Hcp_CFzT&amp;oh=00_AQBXWNHkf7UceO2ngEorXkQGLzSxrBrJncw_R8hOcoKLmA&amp;oe=6A5A21C9" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/04/14 19:53</span>
+      </div>
+      <div class="card-preview">カフェ写真も気軽に撮るならiPhoneだな！ #shotoniphone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,745</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">15</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">15</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.86%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">70</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXHAOjzCRn3/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ダークグリーン</span><span class="ai-chip">キャメル（ラテ）</span><span class="ai-chip">シルバー</span><span class="ai-chip">落ち着いた室内光</span><span class="ai-chip">俯瞰・手で三角形を作る</span><span class="ai-chip">シック・低彩度</span><span class="ai-chip">手元×カフェドリンク</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>手元写真の撮り方（ポーズ・小物使い）の参考。アクセサリーの見せ方も学びに</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>ドリンクに手を添えて生活感と人物感を出す</li><li>深緑×キャメルの補色的配色</li><li>リングなど小物で画面に情報を足す</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>カフェ写真を撮りたいiPhoneユーザー</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DYEtTHdCe8p/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/686942766_17869799151671721_8140463190617435964_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ReK7rBylNEYQ7kNvwH2k55q&amp;_nc_oc=AdoyV97Joa2NTNUJ1tnA6zhynIdLBe2GxiP9MlpIR9AYBhQ7QRwO7qQuuSsHL3gxRet8s2bGPTGyR351ITpYkrpZ&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF1tU4-BtlVEYuOuUSWOnvaHCg9ocjv_WZBARs3XjB9UtmUGDWtOqmduVqy-ZO-E1OfY9OY-41f&amp;oh=00_AQBREpkaNVIwQghK8tmnszZW38CG0Wop475-pF47Ohvmdw&amp;oe=6A5A2CCE" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/05/08 19:00</span>
+      </div>
+      <div class="card-preview">全部iPhoneで撮ったカフェ写真！ 撮影方法はThreadsにて解説してます🍽️ -———————————— sho…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,672</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">14</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">19</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.84%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DYEtTHdCe8p/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">サーモンピンク</span><span class="ai-chip">白</span><span class="ai-chip">グリーン</span><span class="ai-chip">窓際の明るい自然光</span><span class="ai-chip">斜め45度・背景を窓ボケに</span><span class="ai-chip">明るくクリーン</span><span class="ai-chip">料理（メインディッシュ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「撮影方法はThreadsで解説」のクロス導線が保存と回遊を両方生む</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>料理は斜め45度＋窓ボケが鉄板</li><li>解説をThreadsに置いてSNS間導線を作る</li><li>料理の主役（いくら等の彩り）にピントを置く</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>カフェ・グルメ写真を撮りたい層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/reel/DaUy8wWzZ1a/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/729685861_17880808155671721_6271817077620521465_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=104&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&amp;_nc_ohc=IbdAST1Im9gQ7kNvwE5i0Wu&amp;_nc_oc=AdrAp0USVYX3OQN6b53Sag3Unnhq0z_bg48sd0Fyq9rzZpFRZHQvhQsqva4s6hoGSe3P1iqiCdbx2GBd-o7sWOMl&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGxFCyrvcmwXM2wT6ycP8GjTG7GsBR-wDa9OjRgG38HLbHbSzej6uHyR-Q_pBkq7FFkG38B307a&amp;oh=00_AQByxqk3R09EI4DgJANqjO-QgXg6dK14Ac_wy4-PnCGlaw&amp;oe=6A5A2534" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">リール</span>
+          
+        </span>
+        <span class="timestamp">2026/07/03 18:00</span>
+      </div>
+      <div class="card-preview">（キャプションなし）</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,575</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">12</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">39</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.76%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/reel/DaUy8wWzZ1a/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">イエロー</span><span class="ai-chip">アスファルトグレー</span><span class="ai-chip">午後の斜光</span><span class="ai-chip">縦動画・日常の切り取り</span><span class="ai-chip">フィルム風</span><span class="ai-chip">路地スナップ（自転車×花）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>リールは閲覧が伸びやすく、日常スナップの空気感がフォロー動機になる</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>写真アカウントでも定期的にリールを混ぜて新規リーチを取る</li><li>撮影過程や複数カットをテンポよく見せる</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>新規リーチ層（フォロワー外）</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXMaZ_NCVL_/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670142406_17865155004671721_388240167004244335_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=2tqWvJtoSpgQ7kNvwEerd8z&amp;_nc_oc=AdpTj-0ddEnr0I0E9Maauskjqu9gcFvD2-3zvu09cooW73pRqvR9WTOv7XvnHAyH0QT5ZsEiTqT1DhXGfjIC2JGY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGPjzMh2sxEvWffShDuL5RTP5U7yEHeWvxo0J4s2lhUe-d27rkkJtIVGZeeXBK9PxiCYPtQNi4K&amp;oh=00_AQCF9K5QRATq4QjqNdJRPwLV-ybhloj_oQ7w1i_DQtXvNQ&amp;oe=6A5A024B" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/04/16 22:18</span>
+      </div>
+      <div class="card-preview">光と影があればどこでも綺麗なフォトスポット🌸 #shotoniphone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">2,138</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">14</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">16</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.65%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">77</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXMaZ_NCVL_/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">イエロー</span><span class="ai-chip">グリーン</span><span class="ai-chip">コンクリートグレー</span><span class="ai-chip">強い直射日光・影のコントラスト</span><span class="ai-chip">斜めの影のラインで画面分割</span><span class="ai-chip">ナチュラル・彩度控えめ</span><span class="ai-chip">花（モッコウバラ）×壁の影</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「光と影があればどこでも撮れる」という視点の学び。身近な場所の再発見</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>晴天の昼、壁に落ちる影を背景に使う</li><li>花×影の組み合わせで日常をフォトスポット化</li><li>#shotoniphone でiPhoneユーザーに届ける</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>iPhoneユーザー・散歩スナップ好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DZXAVYGGoO1/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/719754931_17876079405671721_6056902696917495830_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=106&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kIkXNvBZ0CoQ7kNvwE-M364&amp;_nc_oc=Ado4Nv3SZ3J9qLBjoVSufW4EsD3z8Zl04AYoPyTPZLx-gxHtPPE6rd5z93K5Wt5eloNMQ2NqqJfUvkb2XQ3xFev8&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQE5ka0BnB0xmPKx7BDnotZRW1A2sHRlyZDF8myGfiGGp6THgcF1tUZm3ArYvzxOFDOBh1HmsXJK&amp;oh=00_AQBQ0XIVPHvWcbIzMfBFRJLL1SGftgkrNafddeTzaliZew&amp;oe=6A5A2EAA" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/06/09 18:05</span>
+      </div>
+      <div class="card-preview">Hydrangeas, shot on iPhone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,809</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">11</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">31</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.61%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">69</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DZXAVYGGoO1/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">くすみパープル</span><span class="ai-chip">ラベンダー</span><span class="ai-chip">曇天の柔らかい光</span><span class="ai-chip">画面いっぱいの寄り・パターン構図</span><span class="ai-chip">マット・フィルム風</span><span class="ai-chip">紫陽花の超クローズアップ</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>iPhoneでここまで寄れる・質感が出るという驚き。季節の花の撮り方参考</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>花に思い切り寄って画面を埋める</li><li>くすみカラーのマット編集で高級感</li><li>季節の被写体（紫陽花=6月）でタイムリーに</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>花の写真好き・iPhoneマクロに興味がある層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXBG0zqCdXN/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670470698_17864332695671721_8453986908896928166_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kFNFXw914BUQ7kNvwFq3Njk&amp;_nc_oc=Ador1694yWsevE3Maa38iteRcZSdudFesX75HxSklB9AP5llCQOd6GkTpuH-VXkcgoJmpwV1R21hbU9_RDyCMr5Z&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHjSCa7VSrheAjToU-KAvWl3lVjfIowFhTWVj1p-fAgN5ZLH1noD7bB35utv-WNk7HPSXOwP9Da&amp;oh=00_AQBe8lUYGiFqdjWhAe9u018EE0zHsJAUjAc3j4siEJG1yg&amp;oe=6A59FF45" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          
+        </span>
+        <span class="timestamp">2026/04/12 12:56</span>
+      </div>
+      <div class="card-preview">春は綺麗なお花がたくさんあって嬉しいな shot on iPhone17PRO</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,492</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">8</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">20</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.54%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">53</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXBG0zqCdXN/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ピンク</span><span class="ai-chip">グリーン</span><span class="ai-chip">明るい日中の自然光</span><span class="ai-chip">中望遠の圧縮感・前後ボケ</span><span class="ai-chip">ふんわり・透明感</span><span class="ai-chip">花畑（小バラ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>iPhone 17 PROの実力チェックとして。機種名を書くと検索・保存されやすい</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>機種名（iPhone17PRO）を明記して機材検討層を取り込む</li><li>花は前後ボケで立体感を作る</li><li>季節の花で定期的に撮る</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>iPhone買い替え検討層・花好き</div>
+  </div>
+    </div>
+  </div></div>
+
+<h2 class="section-title"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>ベスト10（総合スコア）</h2>
+<p class="section-note">スコア = 閲覧数50% + 保存25% + コメント15% + いいね10%（上位5%基準で正規化） ／ 緑のブロックはClaudeが写真を実際に見て書いたAI分析（8件）</p>
+<div class="cards-grid">
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXMaZ_NCVL_/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670142406_17865155004671721_388240167004244335_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=103&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=2tqWvJtoSpgQ7kNvwEerd8z&amp;_nc_oc=AdpTj-0ddEnr0I0E9Maauskjqu9gcFvD2-3zvu09cooW73pRqvR9WTOv7XvnHAyH0QT5ZsEiTqT1DhXGfjIC2JGY&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGPjzMh2sxEvWffShDuL5RTP5U7yEHeWvxo0J4s2lhUe-d27rkkJtIVGZeeXBK9PxiCYPtQNi4K&amp;oh=00_AQCF9K5QRATq4QjqNdJRPwLV-ybhloj_oQ7w1i_DQtXvNQ&amp;oe=6A5A024B" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/04/16 22:18</span>
+      </div>
+      <div class="card-preview">光と影があればどこでも綺麗なフォトスポット🌸 #shotoniphone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">2,138</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">14</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">16</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.65%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">77</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXMaZ_NCVL_/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">イエロー</span><span class="ai-chip">グリーン</span><span class="ai-chip">コンクリートグレー</span><span class="ai-chip">強い直射日光・影のコントラスト</span><span class="ai-chip">斜めの影のラインで画面分割</span><span class="ai-chip">ナチュラル・彩度控えめ</span><span class="ai-chip">花（モッコウバラ）×壁の影</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「光と影があればどこでも撮れる」という視点の学び。身近な場所の再発見</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>晴天の昼、壁に落ちる影を背景に使う</li><li>花×影の組み合わせで日常をフォトスポット化</li><li>#shotoniphone でiPhoneユーザーに届ける</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>iPhoneユーザー・散歩スナップ好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXHAOjzCRn3/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670704098_17864757495671721_7429033275917960084_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=110&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Zvzo8_Pmge0Q7kNvwFDNDEH&amp;_nc_oc=AdppsE8bOu9AYQHMqEvDdm5kHqIoT6sRnnM9J7lvnCTE_Wzvloog8OCz4_DtkFApAoFOjTf0t0kY0jd356sOfb8y&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF2j3-7Gn5WIXP2Btu3zaKHvhvqLl0MelaYwnRRplGBr-BIdQvv6yH2MfWg6hgcxIL5Hcp_CFzT&amp;oh=00_AQBXWNHkf7UceO2ngEorXkQGLzSxrBrJncw_R8hOcoKLmA&amp;oe=6A5A21C9" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/04/14 19:53</span>
+      </div>
+      <div class="card-preview">カフェ写真も気軽に撮るならiPhoneだな！ #shotoniphone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,745</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">15</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">15</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.86%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">70</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXHAOjzCRn3/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ダークグリーン</span><span class="ai-chip">キャメル（ラテ）</span><span class="ai-chip">シルバー</span><span class="ai-chip">落ち着いた室内光</span><span class="ai-chip">俯瞰・手で三角形を作る</span><span class="ai-chip">シック・低彩度</span><span class="ai-chip">手元×カフェドリンク</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>手元写真の撮り方（ポーズ・小物使い）の参考。アクセサリーの見せ方も学びに</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>ドリンクに手を添えて生活感と人物感を出す</li><li>深緑×キャメルの補色的配色</li><li>リングなど小物で画面に情報を足す</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>カフェ写真を撮りたいiPhoneユーザー</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DZXAVYGGoO1/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/719754931_17876079405671721_6056902696917495830_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=106&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kIkXNvBZ0CoQ7kNvwE-M364&amp;_nc_oc=Ado4Nv3SZ3J9qLBjoVSufW4EsD3z8Zl04AYoPyTPZLx-gxHtPPE6rd5z93K5Wt5eloNMQ2NqqJfUvkb2XQ3xFev8&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQE5ka0BnB0xmPKx7BDnotZRW1A2sHRlyZDF8myGfiGGp6THgcF1tUZm3ArYvzxOFDOBh1HmsXJK&amp;oh=00_AQBQ0XIVPHvWcbIzMfBFRJLL1SGftgkrNafddeTzaliZew&amp;oe=6A5A2EAA" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/06/09 18:05</span>
+      </div>
+      <div class="card-preview">Hydrangeas, shot on iPhone</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,809</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">11</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">31</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.61%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">69</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DZXAVYGGoO1/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">くすみパープル</span><span class="ai-chip">ラベンダー</span><span class="ai-chip">曇天の柔らかい光</span><span class="ai-chip">画面いっぱいの寄り・パターン構図</span><span class="ai-chip">マット・フィルム風</span><span class="ai-chip">紫陽花の超クローズアップ</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>iPhoneでここまで寄れる・質感が出るという驚き。季節の花の撮り方参考</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>花に思い切り寄って画面を埋める</li><li>くすみカラーのマット編集で高級感</li><li>季節の被写体（紫陽花=6月）でタイムリーに</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>花の写真好き・iPhoneマクロに興味がある層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DYEtTHdCe8p/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/686942766_17869799151671721_8140463190617435964_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=111&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ReK7rBylNEYQ7kNvwH2k55q&amp;_nc_oc=AdoyV97Joa2NTNUJ1tnA6zhynIdLBe2GxiP9MlpIR9AYBhQ7QRwO7qQuuSsHL3gxRet8s2bGPTGyR351ITpYkrpZ&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQF1tU4-BtlVEYuOuUSWOnvaHCg9ocjv_WZBARs3XjB9UtmUGDWtOqmduVqy-ZO-E1OfY9OY-41f&amp;oh=00_AQBREpkaNVIwQghK8tmnszZW38CG0Wop475-pF47Ohvmdw&amp;oe=6A5A2CCE" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/05/08 19:00</span>
+      </div>
+      <div class="card-preview">全部iPhoneで撮ったカフェ写真！ 撮影方法はThreadsにて解説してます🍽️ -———————————— sho…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,672</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">14</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">19</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.84%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DYEtTHdCe8p/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">サーモンピンク</span><span class="ai-chip">白</span><span class="ai-chip">グリーン</span><span class="ai-chip">窓際の明るい自然光</span><span class="ai-chip">斜め45度・背景を窓ボケに</span><span class="ai-chip">明るくクリーン</span><span class="ai-chip">料理（メインディッシュ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「撮影方法はThreadsで解説」のクロス導線が保存と回遊を両方生む</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>料理は斜め45度＋窓ボケが鉄板</li><li>解説をThreadsに置いてSNS間導線を作る</li><li>料理の主役（いくら等の彩り）にピントを置く</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>カフェ・グルメ写真を撮りたい層</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/reel/DaUy8wWzZ1a/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/729685861_17880808155671721_6271817077620521465_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=104&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&amp;_nc_ohc=IbdAST1Im9gQ7kNvwE5i0Wu&amp;_nc_oc=AdrAp0USVYX3OQN6b53Sag3Unnhq0z_bg48sd0Fyq9rzZpFRZHQvhQsqva4s6hoGSe3P1iqiCdbx2GBd-o7sWOMl&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQGxFCyrvcmwXM2wT6ycP8GjTG7GsBR-wDa9OjRgG38HLbHbSzej6uHyR-Q_pBkq7FFkG38B307a&amp;oh=00_AQByxqk3R09EI4DgJANqjO-QgXg6dK14Ac_wy4-PnCGlaw&amp;oe=6A5A2534" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">リール</span>
+          
+        </span>
+        <span class="timestamp">2026/07/03 18:00</span>
+      </div>
+      <div class="card-preview">（キャプションなし）</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,575</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">12</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">39</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.76%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">67</span></div>
+        <a class="permalink" href="https://www.instagram.com/reel/DaUy8wWzZ1a/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">イエロー</span><span class="ai-chip">アスファルトグレー</span><span class="ai-chip">午後の斜光</span><span class="ai-chip">縦動画・日常の切り取り</span><span class="ai-chip">フィルム風</span><span class="ai-chip">路地スナップ（自転車×花）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>リールは閲覧が伸びやすく、日常スナップの空気感がフォロー動機になる</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>写真アカウントでも定期的にリールを混ぜて新規リーチを取る</li><li>撮影過程や複数カットをテンポよく見せる</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>新規リーチ層（フォロワー外）</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DYo3PgYCT7F/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/704636936_17872541883671721_3304065939215378511_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=108&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=B8xxcrXovJ4Q7kNvwFqtwbB&amp;_nc_oc=AdqCh1q9qG_QXyriBHsjYOgzp7UhYkp8-8X64g9Ba4sqyEpEAqNYG6xLXX5q7vLoQ1F13X3Ep3zwuCTryyI-omHj&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQEM4-5sCxQ7xg39mwdwTXXB6oDP92Hz0LBDGm2veb0xGA-JIczxFAY73alP_6gywBadCKjD_lLm&amp;oh=00_AQBJQvQ_EugArZNdLHBE6fRX3N0zpDKCh_-rHf5gKdQXWg&amp;oe=6A5A1869" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/05/22 20:00</span>
+      </div>
+      <div class="card-preview">iPhoneで物撮りするの、意外と難しくない？ ということで撮り方のポイント今日投稿してます携帯 #shotonipho…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">2,014</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">5</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">18</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.25%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">60</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DYo3PgYCT7F/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ベージュ</span><span class="ai-chip">白（カーテン）</span><span class="ai-chip">木</span><span class="ai-chip">レースカーテン越しの柔らかい窓光</span><span class="ai-chip">窓際・非対称の余白</span><span class="ai-chip">ナチュラル・暖色</span><span class="ai-chip">雑貨（無印キャンドル）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「物撮りのポイントはThreadsで」導線。撮り方を知りたい人の保存</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>レースカーテン越しの光=無料のディフューザー</li><li>雑貨は窓際の台に置くだけで様になる</li><li>ノウハウ解説へのクロス導線</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>物撮りを練習したい層・無印好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DYHSCvoiYYV/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/695691306_17869800303671721_8461709356520367874_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=104&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=ItYGrKuVxp4Q7kNvwFFveLG&amp;_nc_oc=AdpveZyyo_As-W1KNsmoHpNVGBkd1kyr9VDI1JyTBz3bo1_nRcU4lO0_Se5VMuQgzJ7UjwU_y2KmXdETNvy3aA04&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHU4SmNo9tnmaM-lDdcXkfAd-ST69YpHKgBOCxYGz8KLER4X8hPnGQPjTwoCOZhb-CPKOEgPqY4&amp;oh=00_AQCF84ObjbgfIkN-7Q6vsOyep3ClMFmUhPgC4qihE-2EeA&amp;oe=6A5A2BBD" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          <span class="chip chip-tag">#×1</span>
+        </span>
+        <span class="timestamp">2026/05/09 19:00</span>
+      </div>
+      <div class="card-preview">光と影を探すフォトウォーク、いつも持ち歩いてるiPhoneで撮影しても楽しいよ📱 -———————————— shot…</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,691</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">6</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">17</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.35%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">54</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DYHSCvoiYYV/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">白</span><span class="ai-chip">グリーン</span><span class="ai-chip">ライトグレー</span><span class="ai-chip">午後の斜光・葉の影</span><span class="ai-chip">ミニマル・面で構成</span><span class="ai-chip">ミニマル・ハイキー</span><span class="ai-chip">建築ディテール（白壁×窓）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>「光と影のフォトウォーク」という遊び方の提案。真似したくなる習慣</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>白壁×影は最高の被写体（どの街にもある）</li><li>フォトウォークという行動をコンテンツ化</li><li>持ち歩けるiPhoneならではの気軽さを強調</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>ミニマル写真好き・散歩好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DXBG0zqCdXN/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/670470698_17864332695671721_8453986908896928166_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=kFNFXw914BUQ7kNvwFq3Njk&amp;_nc_oc=Ador1694yWsevE3Maa38iteRcZSdudFesX75HxSklB9AP5llCQOd6GkTpuH-VXkcgoJmpwV1R21hbU9_RDyCMr5Z&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHjSCa7VSrheAjToU-KAvWl3lVjfIowFhTWVj1p-fAgN5ZLH1noD7bB35utv-WNk7HPSXOwP9Da&amp;oh=00_AQBe8lUYGiFqdjWhAe9u018EE0zHsJAUjAc3j4siEJG1yg&amp;oe=6A59FF45" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          
+        </span>
+        <span class="timestamp">2026/04/12 12:56</span>
+      </div>
+      <div class="card-preview">春は綺麗なお花がたくさんあって嬉しいな shot on iPhone17PRO</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,492</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">8</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">20</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.54%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">53</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DXBG0zqCdXN/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+  <div class="ai-block">
+    <div class="ai-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> AI写真分析</div>
+    <div class="ai-chips"><span class="ai-chip">ピンク</span><span class="ai-chip">グリーン</span><span class="ai-chip">明るい日中の自然光</span><span class="ai-chip">中望遠の圧縮感・前後ボケ</span><span class="ai-chip">ふんわり・透明感</span><span class="ai-chip">花畑（小バラ）</span></div>
+    <div class="ai-row"><span class="ai-k">保存される理由</span>iPhone 17 PROの実力チェックとして。機種名を書くと検索・保存されやすい</div>
+    <div class="ai-row"><span class="ai-k">再現ポイント</span><ul class="ai-list"><li>機種名（iPhone17PRO）を明記して機材検討層を取り込む</li><li>花は前後ボケで立体感を作る</li><li>季節の花で定期的に撮る</li></ul></div>
+    <div class="ai-row"><span class="ai-k">刺さる層</span>iPhone買い替え検討層・花好き</div>
+  </div>
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DZ9uj2xif_V/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/728704398_17878816707671721_8926392175354376505_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=109&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=SAjo5Zss37QQ7kNvwFqysNC&amp;_nc_oc=Adp5G3URKMmCOdTS8D_BZlWOPpnXyodj7zfSoAD2mGyys5cUvqtuoGLTqh_SGLfoVqzbt5UFsM_0QIHA9-bC7ThW&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHXrgS47LdscQvR-g1RCoxspIOo0Jsg1c4NM1-Hn0Gbebcyxrvd_g1p5HY2IJlwWYglqQ3Drmpp&amp;oh=00_AQBN433UFQJIsJjAQYJd2ZkKVMOIgPLJRcbZPV6qRbwVUQ&amp;oe=6A5A1A58" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">カルーセル</span>
+          
+        </span>
+        <span class="timestamp">2026/06/24 19:00</span>
+      </div>
+      <div class="card-preview">綺麗な青空に出会うタイミングにカメラがなければiPhoneで撮ればいいじゃんね☁️ shot on iPhone13</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,363</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">5</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">32</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.37%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">48</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DZ9uj2xif_V/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div>
+  <div class="card rank-top">
+    <a href="https://www.instagram.com/p/DW8_jsaiSR1/" target="_blank" rel="noopener"><img class="card-photo" src="https://scontent-itm1-1.cdninstagram.com/v/t51.82787-15/669980444_17864017659671721_1559653913309371309_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=Mn1en_PHRxYQ7kNvwEv5EeW&amp;_nc_oc=AdoZWMX7wkBy-IVCgBsJNZyAwbqvysfX4Ec_fesZYBauTPJhhNLX8BPncDjbMh1h9cXTlEiZBwlZfd9FbQcA00am&amp;_nc_zt=23&amp;_nc_ht=scontent-itm1-1.cdninstagram.com&amp;edm=ANo9K5cEAAAA&amp;_nc_gid=aQW2y3iKLKVhSaJ99XFphg&amp;_nc_tpa=Q5bMBQHcGrpy4M0699kJAqvWHlpyDhWO49X0IAsDHI3ATN2mMKDec4dR7MjH-BRUtU8Xi7UZqSlYRXO2&amp;oh=00_AQA6ZtoASBV9qgIjitZoMqOa6NICBIUoB8IZT97iJmg9KQ&amp;oe=6A5A2836" loading="lazy" alt=""></a>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="chips">
+          <span class="chip">画像</span>
+          
+        </span>
+        <span class="timestamp">2026/04/10 22:35</span>
+      </div>
+      <div class="card-preview">shot on iPhone17Pro</div>
+      <div class="metrics-row">
+        <div class="metric accent"><div class="m-label">閲覧数</div><div class="m-value">1,104</div></div>
+        <div class="metric"><div class="m-label">保存</div><div class="m-value">6</div></div>
+        <div class="metric"><div class="m-label">コメント</div><div class="m-value">0</div></div>
+        <div class="metric"><div class="m-label">いいね</div><div class="m-value">14</div></div>
+      </div>
+      <div class="rates-row">
+        <div class="rate"><span class="r-label">保存率</span><span class="r-value low">0.54%</span></div>
+        <div class="rate"><span class="r-label">スコア</span><span class="r-value">39</span></div>
+        <a class="permalink" href="https://www.instagram.com/p/DW8_jsaiSR1/" target="_blank" rel="noopener">開く ↗</a>
+      </div>
+      
+    </div>
+  </div></div>
+
+
+
+<footer class="footer">
+  Instagram 分析 — @fu___iphone ／ 評価基準: ❶閲覧数 ❷保存 ❸コメント ❹いいね<br>
+  ※投稿写真はInstagramのCDN経由で表示しており、古いレポートでは画像が期限切れになることがあります（レポート再生成で復活）
+</footer>
+
+</div>
+<script>
+document.querySelectorAll(".sortable th[data-sort]").forEach(function(th){
+  th.addEventListener("click", function(){
+    var table = th.closest("table");
+    var tbody = table.querySelector("tbody");
+    var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+    var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+    var asc = th.dataset.asc === "1";
+    rows.sort(function(a, b){
+      var av = parseFloat(a.children[idx].dataset.v || a.children[idx].textContent.replace(/[,%]/g,"")) || 0;
+      var bv = parseFloat(b.children[idx].dataset.v || b.children[idx].textContent.replace(/[,%]/g,"")) || 0;
+      return asc ? av - bv : bv - av;
+    });
+    th.dataset.asc = asc ? "0" : "1";
+    rows.forEach(function(r){ tbody.appendChild(r); });
+  });
+});
+var searchInput = document.getElementById("post-search");
+var catFilter = document.getElementById("cat-filter");
+var searchCount = document.getElementById("search-count");
+function applyFilter(){
+  var q = searchInput.value.toLowerCase().trim();
+  var c = catFilter.value;
+  var filtering = !!(q || c);
+  var shown = 0;
+  document.querySelectorAll("#all-posts tbody tr").forEach(function(tr){
+    var show;
+    if (filtering) {
+      var matchQ = !q || (tr.dataset.full || "").indexOf(q) !== -1 || tr.textContent.toLowerCase().indexOf(q) !== -1;
+      var matchC = !c || tr.dataset.cat === c;
+      show = matchQ && matchC;
+    } else {
+      show = tr.dataset.def === "1";
+    }
+    tr.style.display = show ? "" : "none";
+    if (show) shown++;
+  });
+  searchCount.textContent = filtering ? shown + " 件ヒット" : "直近30日の閲覧数上位 " + shown + " 件を表示中";
+}
+searchInput.addEventListener("input", applyFilter);
+catFilter.addEventListener("change", applyFilter);
+applyFilter();
+</script>
+</body>
+</html>
